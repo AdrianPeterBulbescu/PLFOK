@@ -164,8 +164,10 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Rânduri executanți goale */
   tr.exec-vide { visibility: collapse !important; }
 
-  /* Selecturi — ascunde săgețile native, forțează culoare neagră */
-  select.drop, .extinctor-grup select {
+  /* Selecturi — înlocuite cu text simplu la print */
+  select[data-ph="1"] { display: none !important; }
+  .print-val { display: inline !important; font-family: Arial, sans-serif; }
+  select.drop:not([data-ph]), .extinctor-grup select {
     background: transparent !important;
     -webkit-appearance: none !important;
     appearance: none !important;
@@ -935,16 +937,34 @@ function showPrintHelp() {
   if (el) { el.style.display = 'block'; el.scrollIntoView({behavior:'smooth'}); }
 }
 
+function selecteToText() {
+  document.querySelectorAll('select.drop').forEach(sel => {
+    if (!sel.value) return;
+    const span = document.createElement('span');
+    span.className = 'print-val';
+    span.textContent = sel.value;
+    sel.parentNode.insertBefore(span, sel.nextSibling);
+    sel.setAttribute('data-ph', '1');
+  });
+}
+
+function restoreSelecte() {
+  document.querySelectorAll('.print-val').forEach(el => el.remove());
+  document.querySelectorAll('select[data-ph]').forEach(sel => sel.removeAttribute('data-ph'));
+}
+
 function faPrint(cuFilename) {
   var printOK = false;
   var prevTitle = document.title;
   if (cuFilename) document.title = buildFilename();
   marcheazaVide();
+  selecteToText();
   window.addEventListener('afterprint', function handler() {
     window.removeEventListener('afterprint', handler);
     printOK = true;
     document.title = prevTitle;
     dezMarcheazaVide();
+    restoreSelecte();
     if (cuFilename) dateSalvate = true;
   });
   try { window.print(); } catch(e) {}
@@ -952,6 +972,7 @@ function faPrint(cuFilename) {
     if (!printOK) {
       document.title = prevTitle;
       dezMarcheazaVide();
+      restoreSelecte();
       showPrintHelp();
     }
   }, 4000);
