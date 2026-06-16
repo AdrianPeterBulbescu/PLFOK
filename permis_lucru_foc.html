@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Permis de Lucru cu Foc - ROMGAZ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; font-size: 13px; background: #e8e8e8; padding: 20px; }
+
+.page { background: white; max-width: 920px; margin: 0 auto; padding: 26px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
+.header .unitate { font-size: 12px; font-weight: bold; }
+.titlu { text-align: center; font-size: 15px; font-weight: bold; margin: 14px 0 5px; letter-spacing: 1px; }
+.nr-row { text-align: center; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 13px; font-weight: bold; flex-wrap: wrap; }
+
+/* ===== CÂMPURI ===== */
+input.camp {
+  border: none; border-bottom: 1px dotted #555;
+  font-size: 12px; font-family: Arial, sans-serif;
+  background: transparent; outline: none; padding: 1px 3px; min-width: 60px;
+}
+input.camp.nr { width: 70px; text-align: center; }
+input.camp.large { flex: 2; min-width: 150px; }
+
+select.drop {
+  border: none; border-bottom: 1px dotted #555;
+  background: #fffde7; font-size: 12px;
+  outline: none; padding: 2px 4px; cursor: pointer; flex: 1; min-width: 120px;
+}
+select.drop.large { flex: 2; min-width: 170px; }
+
+/* ===== DATE PICKER ===== */
+.date-pick { position: relative; display: inline-flex; align-items: center; cursor: pointer; vertical-align: bottom; }
+.dp-shown { font-size: 12px; border-bottom: 1px dotted #555; padding: 1px 20px 1px 3px; min-width: 90px; color: #333; white-space: nowrap; font-family: Arial, sans-serif; }
+.dp-shown.empty { color: #999; font-style: italic; }
+.dp-icon { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-size: 12px; pointer-events: none; color: #666; }
+.dp-hidden { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+/* ===== ORA PICKER ===== */
+.time-pick { position: relative; display: inline-flex; align-items: center; cursor: pointer; vertical-align: bottom; }
+.tp-shown { font-size: 12px; border-bottom: 1px dotted #555; padding: 1px 20px 1px 3px; min-width: 52px; color: #333; white-space: nowrap; font-family: Arial, sans-serif; }
+.tp-shown.empty { color: #999; font-style: italic; }
+.tp-icon { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); font-size: 11px; pointer-events: none; color: #666; }
+.tp-hidden { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+/* ===== MULTI-SELECT ===== */
+.ms-wrapper { position: relative; flex: 2; min-width: 170px; }
+.ms-display {
+  border-bottom: 1px dotted #555; background: #fffde7;
+  font-size: 12px; padding: 3px 22px 3px 4px; cursor: pointer;
+  min-height: 21px; position: relative; user-select: none;
+  white-space: normal; word-break: break-word; line-height: 1.4;
+}
+.ms-display::after { content: '▾'; position: absolute; right: 5px; top: 2px; color: #555; font-size: 11px; }
+.ms-display.ph { color: #888; }
+.ms-panel {
+  display: none; position: absolute; top: 100%; left: 0; z-index: 999;
+  background: white; border: 1px solid #aaa; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  min-width: 230px; max-height: 210px; overflow-y: auto;
+}
+.ms-panel.open { display: block; }
+.ms-panel label { display: flex; align-items: center; gap: 7px; padding: 5px 10px; font-size: 12px; cursor: pointer; font-weight: normal; }
+.ms-panel label:hover { background: #e3f2fd; }
+.ms-panel input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+.ms-panel .ms-hdr { padding: 4px 10px; font-size: 11px; color: #666; border-bottom: 1px solid #eee; background: #f5f5f5; font-style: italic; }
+
+/* ===== SECȚIUNI ===== */
+.bloc { border: 1px solid #333; margin-bottom: -1px; }
+.rand { display: flex; flex-wrap: wrap; align-items: baseline; padding: 4px 7px; gap: 4px; }
+.rand span { font-size: 12px; }
+.rand .bold { font-weight: bold; }
+.rand.top-border { border-top: 1px solid #333; }
+.camp-mare { width: 100%; border: none; border-top: 1px solid #ddd; resize: vertical;
+  font-size: 12px; font-family: Arial, sans-serif; padding: 3px 7px; outline: none;
+  min-height: 36px; background: #fafafa; }
+
+/* ===== TABEL ===== */
+.tabel-final { width: 100%; border-collapse: collapse; }
+.tabel-final th, .tabel-final td { border: 1px solid #333; padding: 4px 7px; font-size: 12px; }
+.tabel-final th { background: #f0f0f0; text-align: center; font-weight: bold; font-size: 11px; }
+.tabel-final td.rol { font-weight: bold; text-align: center; font-size: 11px; background: #fafafa; }
+.tabel-final input.camp { width: 100%; }
+.exec-name { font-size: 12px; padding: 2px 4px; min-height: 20px; border-bottom: 1px dotted #888; }
+
+/* ===== EXTINCTOARE ===== */
+.extinctor-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 5px 7px; align-items: center; }
+.extinctor-grup { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.extinctor-grup select { font-size: 12px; background: #fffde7; border: none; border-bottom: 1px dotted #555; outline: none; padding: 2px 4px; min-width: 160px; }
+.extinctor-grup input { width: 40px; font-size: 12px; border: none; border-bottom: 1px dotted #555; outline: none; text-align: center; padding: 1px 3px; background: transparent; }
+.extinctor-grup span { font-size: 11px; color: #555; }
+
+/* ===== BUTOANE ===== */
+.actiuni { max-width: 920px; margin: 14px auto 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding-bottom: 28px; }
+.btn { padding: 10px 20px; font-size: 14px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
+.btn:hover { opacity: 0.85; }
+.btn-print { background: #1565c0; color: white; }
+.btn-pdf   { background: #6a1b9a; color: white; }
+.btn-reset { background: #c62828; color: white; }
+.btn-names { background: #e65100; color: white; }
+
+/* ===== MODAL ===== */
+.modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); z-index:9999; overflow-y:auto; }
+.modal-overlay.open { display:flex; align-items:flex-start; justify-content:center; padding:20px; }
+.modal-box { background:white; padding:22px; border-radius:8px; width:540px; max-width:100%; box-shadow:0 8px 32px rgba(0,0,0,0.3); margin:auto; }
+.modal-box h3 { margin-bottom:10px; font-size:15px; }
+.modal-box textarea { width:100%; height:180px; font-size:13px; font-family:monospace; border:1px solid #ccc; padding:8px; resize:vertical; outline:none; }
+.modal-box p { font-size:12px; color:#555; margin:6px 0; line-height:1.5; }
+.modal-tabs { display:flex; margin-bottom:10px; border-bottom:2px solid #ccc; }
+.modal-tab { padding:7px 16px; font-size:13px; cursor:pointer; border:none; background:none; font-weight:bold; color:#777; border-bottom:3px solid transparent; margin-bottom:-2px; }
+.modal-tab.active { color:#e65100; border-bottom-color:#e65100; }
+.modal-btns { display:flex; gap:10px; margin-top:10px; justify-content:flex-end; }
+.modal-btns button { padding:8px 18px; font-size:13px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; }
+.btn-ok { background:#2e7d32; color:white; }
+.btn-cancel { background:#757575; color:white; }
+
+/* ===== PRINT — O SINGURĂ PAGINĂ A4 ===== */
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: white !important; padding: 0 !important; }
+  .actiuni, .modal-overlay, #js-status, #print-help { display: none !important; }
+  .ms-panel { display: none !important; }
+
+  /* Scalare globală pentru a garanta o singură pagină */
+  .page {
+    box-shadow: none !important;
+    padding: 5mm 6mm !important;
+    max-width: 100% !important;
+    zoom: 0.97;
+  }
+
+  /* Fonturi compacte */
+  * { font-size: 8pt !important; line-height: 1.25 !important; }
+  .titlu { font-size: 9.5pt !important; margin: 4px 0 2px !important; }
+  .nr-row { margin-bottom: 4px !important; }
+  .header .unitate { font-size: 8pt !important; }
+
+  /* Rânduri mai strânse */
+  .rand { padding: 1px 5px !important; gap: 2px !important; }
+
+  /* Multi-select — o singură linie la print */
+  .ms-display { white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-height: 16px !important; }
+
+  /* Textarea — ascunde dacă goală, altfel compactă */
+  textarea.camp-mare { padding: 1px 5px !important; min-height: 0 !important; resize: none !important; background: transparent !important; border-top: 1px solid #ccc !important; overflow: hidden !important; }
+  textarea.camp-mare.vide { display: none !important; }
+
+  /* Tabel compact */
+  .tabel-final th, .tabel-final td { padding: 1px 4px !important; }
+  .exec-name { min-height: 12px !important; padding: 1px 3px !important; }
+
+  /* Extinctoare */
+  .extinctor-row { padding: 1px 5px !important; gap: 4px !important; }
+  .extinctor-grup.vide { display: none !important; }
+
+  /* Rânduri executanți goale */
+  tr.exec-vide { display: none !important; }
+
+  /* Selecturi și date */
+  select.drop, .extinctor-grup select { background: transparent !important; }
+  select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
+  .dp-shown.empty, .tp-shown.empty { visibility: hidden !important; }
+  .ms-display.ph { visibility: hidden !important; }
+  .dp-icon, .tp-icon { display: none !important; }
+
+  /* Placeholder-uri invizibile */
+  input.camp::placeholder, textarea.camp-mare::placeholder { color: transparent !important; }
+  input.camp:placeholder-shown { border-bottom-color: transparent !important; }
+}
+
+/* ===== CLASA COMPACTĂ PENTRU PDF ===== */
+body.compact .page { padding: 4px 6px !important; }
+body.compact .rand { padding: 1px 5px !important; gap: 3px !important; }
+body.compact .titlu { font-size: 10pt !important; margin: 4px 0 2px !important; }
+body.compact .nr-row { margin-bottom: 4px !important; }
+body.compact .rand span, body.compact .rand .bold,
+body.compact input.camp, body.compact select.drop,
+body.compact .dp-shown, body.compact .tp-shown, body.compact .ms-display,
+body.compact .tabel-final th, body.compact .tabel-final td,
+body.compact .exec-name, body.compact .extinctor-grup select,
+body.compact .extinctor-grup input, body.compact .extinctor-grup span,
+body.compact .camp-mare { font-size: 7.5pt !important; }
+body.compact .camp-mare { min-height: 0 !important; padding: 1px 5px !important; resize: none !important; }
+body.compact textarea.camp-mare.vide { display: none !important; }
+body.compact .tabel-final th, body.compact .tabel-final td { padding: 2px 5px !important; }
+body.compact .exec-name { min-height: 14px !important; padding: 1px 4px !important; }
+body.compact .extinctor-row { padding: 2px 5px !important; gap: 5px !important; }
+body.compact .dp-icon, body.compact .tp-icon { display: none !important; }
+body.compact .extinctor-grup.vide { display: none !important; }
+body.compact tr.exec-vide { display: none !important; }
+body.compact select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
+
+/* ===== MOBIL ===== */
+@media screen and (max-width: 768px) {
+  body { padding: 6px; font-size: 13px; }
+  .page { padding: 12px 10px; }
+  .rand { gap: 4px; padding: 3px 5px; }
+  select.drop, select.drop.large { min-width: 100%; flex: 1 1 100%; font-size: 14px; padding: 6px 4px; }
+  .ms-wrapper { min-width: 100%; flex: 1 1 100%; }
+  .ms-display { font-size: 14px; padding: 7px 24px 7px 6px; min-height: 36px; }
+  input.camp.large { min-width: 100%; flex: 1 1 100%; }
+  .extinctor-grup { flex: 1 1 100%; }
+  .extinctor-grup select { min-width: 0; flex: 1; font-size: 14px; padding: 6px 4px; }
+  .btn { padding: 13px 14px; font-size: 14px; }
+  .tabel-final { font-size: 11px; }
+  .tabel-final th, .tabel-final td { padding: 3px 4px; }
+
+  /* Date/time pickers pe mobil: arată inputul nativ direct */
+  .dp-shown, .dp-icon { display: none !important; }
+  .dp-hidden {
+    position: static !important; opacity: 1 !important;
+    width: auto !important; height: auto !important;
+    border: none !important; border-bottom: 1px dotted #555 !important;
+    font-size: 14px !important; background: transparent !important;
+    outline: none !important; min-width: 130px; padding: 4px 2px;
+  }
+  .tp-shown, .tp-icon { display: none !important; }
+  .tp-hidden {
+    position: static !important; opacity: 1 !important;
+    width: auto !important; height: auto !important;
+    border: none !important; border-bottom: 1px dotted #555 !important;
+    font-size: 14px !important; background: transparent !important;
+    outline: none !important; min-width: 90px; padding: 4px 2px;
+  }
+  /* Butoane mai mari pentru touch */
+  input.camp { font-size: 14px; padding: 4px 3px; }
+  textarea.camp-mare { font-size: 13px; min-height: 50px; }
+
+  /* Pe mobil panourile ms rămân mereu vizibile — nu necesită JS pentru toggle */
+  .ms-display { display: none !important; }
+  .ms-panel {
+    display: block !important;
+    position: static !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    max-height: none !important;
+    margin-top: 4px;
+  }
+  .ms-panel label { padding: 8px 10px !important; font-size: 14px !important; }
+  .ms-panel input[type=checkbox] { width: 18px !important; height: 18px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== MODAL LISTE PERSOANE ===== -->
+<div class="modal-overlay" id="modalPersoane">
+  <div class="modal-box">
+    <h3>Editare Liste Persoane</h3>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('exec')">Executanți</button>
+      <button class="modal-tab" onclick="switchTab('resp')">Responsabili / Șefi</button>
+    </div>
+    <p id="modal-desc-exec">Lista <strong>executanților</strong> — câte un Nume Prenume pe linie:</p>
+    <p id="modal-desc-resp" style="display:none">Lista <strong>responsabililor</strong> (emitent, șef sector, pct. 9/11/12) — câte un Nume Prenume pe linie:</p>
+    <textarea id="listaPersoaneText"></textarea>
+    <p style="color:#c62828;font-size:11px;">Pentru persistență permanentă editați variabilele <code>PERSOANE</code> / <code>RESPONSABILI</code> direct în fișierul HTML.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Anulare</button>
+      <button class="btn-ok" onclick="aplicaLista()">Aplică</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FORMULAR ===== -->
+<div class="page" id="formular">
+
+  <div class="header">
+    <div class="unitate">Unitatea emitentă:</div>
+    <div class="unitate">SNGN ROMGAZ SA - SUCURSALA TG. MUREȘ</div>
+  </div>
+
+  <div class="titlu">PERMIS DE LUCRU CU FOC</div>
+  <div class="nr-row">
+    <span>Nr.:</span>
+    <input class="camp nr" type="text" id="numar" placeholder="______">
+    <span>din:</span>
+    <label class="date-pick">
+      <span class="dp-shown empty" id="data_emitere_shown">zz.ll.aaaa</span>
+      <span class="dp-icon">📅</span>
+      <input type="date" class="dp-hidden" id="data_emitere">
+    </label>
+  </div>
+
+  <!-- Bloc 1 -->
+  <div class="bloc">
+    <div class="rand">
+      <span>Se eliberează prezentul permis de lucru cu foc domnului:</span>
+      <select class="drop large" id="executant_principal">
+        <option value="">-- selectați --</option>
+        <option value="Tomulică Marian">Tomulică Marian</option>
+        <option value="Vlad Vasile">Vlad Vasile</option>
+        <option value="Bulbescu Adrian">Bulbescu Adrian</option>
+        <option value="Dălălău Ioan">Dălălău Ioan</option>
+        <option value="Lazăr Sergiu">Lazăr Sergiu</option>
+        <option value="Mare Marian">Mare Marian</option>
+        <option value="Miclea Paul">Miclea Paul</option>
+        <option value="Moldovan Alexandru">Moldovan Alexandru</option>
+        <option value="Mureșan Marian">Mureșan Marian</option>
+        <option value="Socaci Rareș">Socaci Rareș</option>
+        <option value="Ștefan Ioan">Ștefan Ioan</option>
+      </select>
+      <span>,</span>
+    </div>
+    <div class="rand top-border">
+      <span>ajutat de domnii:</span>
+      <div class="ms-wrapper" style="flex:1; min-width:200px;">
+        <div class="ms-display ph" id="ms_ajutori_display" onclick="toggleMS('ajutori')">-- selectați (max 5) --</div>
+        <div class="ms-panel" id="ms_ajutori_panel">
+          <div class="ms-hdr">Selectați (max. 5)</div>
+          <label><input type="checkbox" value="Tomulică Marian" onchange="toggleAjutor('Tomulică Marian',this.checked)">Tomulică Marian</label>
+          <label><input type="checkbox" value="Vlad Vasile" onchange="toggleAjutor('Vlad Vasile',this.checked)">Vlad Vasile</label>
+          <label><input type="checkbox" value="Bulbescu Adrian" onchange="toggleAjutor('Bulbescu Adrian',this.checked)">Bulbescu Adrian</label>
+          <label><input type="checkbox" value="Dălălău Ioan" onchange="toggleAjutor('Dălălău Ioan',this.checked)">Dălălău Ioan</label>
+          <label><input type="checkbox" value="Lazăr Sergiu" onchange="toggleAjutor('Lazăr Sergiu',this.checked)">Lazăr Sergiu</label>
+          <label><input type="checkbox" value="Mare Marian" onchange="toggleAjutor('Mare Marian',this.checked)">Mare Marian</label>
+          <label><input type="checkbox" value="Miclea Paul" onchange="toggleAjutor('Miclea Paul',this.checked)">Miclea Paul</label>
+          <label><input type="checkbox" value="Moldovan Alexandru" onchange="toggleAjutor('Moldovan Alexandru',this.checked)">Moldovan Alexandru</label>
+          <label><input type="checkbox" value="Mureșan Marian" onchange="toggleAjutor('Mureșan Marian',this.checked)">Mureșan Marian</label>
+          <label><input type="checkbox" value="Socaci Rareș" onchange="toggleAjutor('Socaci Rareș',this.checked)">Socaci Rareș</label>
+          <label><input type="checkbox" value="Ștefan Ioan" onchange="toggleAjutor('Ștefan Ioan',this.checked)">Ștefan Ioan</label>
+        </div>
+      </div>
+    </div>
+    <div class="rand top-border">
+      <span>care urmează să execute:</span>
+      <select class="drop large" id="ce_executa">
+        <option value="">-- selectați tipul lucrării --</option>
+        <option>Tăiere</option>
+        <option>Sudură</option>
+        <option>Tăiere și sudură</option>
+      </select>
+      <span>folosind:</span>
+      <div class="ms-wrapper">
+        <div class="ms-display ph" id="ms_ech_display" onclick="toggleMS('ech')">-- selectați (max 2) --</div>
+        <div class="ms-panel" id="ms_ech_panel">
+          <div class="ms-hdr">Selectați (max. 2)</div>
+          <label><input type="checkbox" value="Aparat sudură autogen (oxiacetilenă)" onchange="toggleEchipament('Aparat sudură autogen (oxiacetilenă)',this.checked)">Aparat sudură autogen (oxiacetilenă)</label>
+          <label><input type="checkbox" value="Aparat sudură electrică (invertor)" onchange="toggleEchipament('Aparat sudură electrică (invertor)',this.checked)">Aparat sudură electrică (invertor)</label>
+          <label><input type="checkbox" value="Polizor unghiular" onchange="toggleEchipament('Polizor unghiular',this.checked)">Polizor unghiular</label>
+          <label><input type="checkbox" value="Agregat de sudură" onchange="toggleEchipament('Agregat de sudură',this.checked)">Agregat de sudură</label>
+        </div>
+      </div>
+    </div>
+    <div class="rand top-border">
+      <span>la (în):</span>
+      <input class="camp large" type="text" id="locatia" placeholder="locația lucrării">
+      <span>Lucrările încep în:</span>
+      <label class="date-pick">
+        <span class="dp-shown empty" id="data_inceput_shown">zz.ll.aaaa</span>
+        <span class="dp-icon">📅</span>
+        <input type="date" class="dp-hidden" id="data_inceput">
+      </label>
+      <span>ora:</span>
+      <label class="time-pick">
+        <span class="tp-shown empty" id="ora_inceput_shown">hh:mm</span>
+        <span class="tp-icon">🕐</span>
+        <input type="time" class="tp-hidden" id="ora_inceput">
+      </label>
+      <span>și se încheie în:</span>
+      <label class="date-pick">
+        <span class="dp-shown empty" id="data_sfarsit_shown">zz.ll.aaaa</span>
+        <span class="dp-icon">📅</span>
+        <input type="date" class="dp-hidden" id="data_sfarsit">
+      </label>
+      <span>ora:</span>
+      <label class="time-pick">
+        <span class="tp-shown empty" id="ora_sfarsit_shown">hh:mm</span>
+        <span class="tp-icon">🕐</span>
+        <input type="time" class="tp-hidden" id="ora_sfarsit">
+      </label>
+    </div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">Premergător, pe timpul și la terminarea lucrărilor cu foc se vor lua următoarele măsuri:</span></div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand">
+      <span class="bold">1. Îndepărtarea sau protejarea materialelor combustibile în zona de executare a lucrărilor și în apropierea acestora, pe o rază de</span>
+      <input class="camp" type="text" id="raza" placeholder="__" style="width:36px;text-align:center;">
+      <span class="bold">m, astfel:</span>
+    </div>
+    <textarea class="camp-mare" id="masura1" rows="2" placeholder="descrieți măsurile luate..."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">2. Golirea, izolarea, spălarea, aerisirea conductelor, utilajelor și instalațiilor, prin:</span></div>
+    <textarea class="camp-mare" id="masura2" rows="2" placeholder="descrieți procedura..."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">3. Ventilarea spațiilor în care se execută lucrările se realizează astfel:</span></div>
+    <textarea class="camp-mare" id="masura3" rows="2" placeholder="descrieți modul de ventilare..."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">4. Verificarea zonei de lucru și a vecinătăților acesteia, înlăturarea surselor de aprindere și a condițiilor care favorizează producerea incendiilor și a exploziilor, protejarea antifoc a materialelor din zonă.</span></div>
+    <textarea class="camp-mare" id="masura4" rows="1" placeholder="descrieți măsurile..."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand">
+      <span class="bold">5. Începerea lucrărilor cu foc s-a făcut în baza buletinului de analiză nr.</span>
+      <input class="camp" type="text" id="buletin_nr" placeholder="____" style="width:55px;text-align:center;">
+      <span class="bold">din:</span>
+      <label class="date-pick">
+        <span class="dp-shown empty" id="buletin_data_shown">zz.ll.aaaa</span>
+        <span class="dp-icon">📅</span>
+        <input type="date" class="dp-hidden" id="buletin_data">
+      </label>
+      <span class="bold">eliberat de:</span>
+      <input class="camp large" type="text" id="buletin_eliberat" placeholder="(acolo unde este cazul)">
+    </div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">6. Respectarea normelor de apărare împotriva incendiilor, specifice tehnologiei de lucru:</span></div>
+    <div class="rand"><span style="padding-left:16px;">– Legea 307 din 12.07.2006 privind apărarea împotriva incendiilor &nbsp;– OUG 52/2015 pentru modificarea și completarea legii 307/2006</span></div>
+    <textarea class="camp-mare" id="masura6" rows="1" placeholder="alte norme aplicabile..."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">7. În zona de lucru se asigură următoarele mijloace de stingere a incendiilor:</span></div>
+    <div class="extinctor-row" id="extinctoare-container">
+      <div class="extinctor-grup"><select id="extinctor1" onchange="markDirty()">
+        <option value="">-- extinctor --</option>
+        <optgroup label="Pulbere (P)">
+          <option>Extinctor P6 – 6 kg pulbere ABC</option>
+          <option>Extinctor P9 – 9 kg pulbere ABC</option>
+          <option>Extinctor P12 – 12 kg pulbere ABC</option>
+        </optgroup>
+        <optgroup label="CO₂ (G)">
+          <option>Extinctor G2 – 2 kg CO₂</option>
+          <option>Extinctor G5 – 5 kg CO₂</option>
+          <option>Extinctor G10 – 10 kg CO₂</option>
+        </optgroup>
+        <optgroup label="Spumă (S)">
+          <option>Extinctor S6 – 6 l spumă AFFF</option>
+          <option>Extinctor S9 – 9 l spumă AFFF</option>
+        </optgroup>
+        <optgroup label="Apă (W)">
+          <option>Extinctor W6 – 6 l apă cu aditivi</option>
+          <option>Extinctor W9 – 9 l apă cu aditivi</option>
+        </optgroup>
+      </select><input type="text" id="extinctor1_buc" placeholder="buc" style="width:38px" onchange="markDirty()"><span>buc.</span></div>
+      <div class="extinctor-grup"><select id="extinctor2" onchange="markDirty()">
+        <option value="">-- extinctor --</option>
+        <optgroup label="Pulbere (P)">
+          <option>Extinctor P6 – 6 kg pulbere ABC</option>
+          <option>Extinctor P9 – 9 kg pulbere ABC</option>
+          <option>Extinctor P12 – 12 kg pulbere ABC</option>
+        </optgroup>
+        <optgroup label="CO₂ (G)">
+          <option>Extinctor G2 – 2 kg CO₂</option>
+          <option>Extinctor G5 – 5 kg CO₂</option>
+          <option>Extinctor G10 – 10 kg CO₂</option>
+        </optgroup>
+        <optgroup label="Spumă (S)">
+          <option>Extinctor S6 – 6 l spumă AFFF</option>
+          <option>Extinctor S9 – 9 l spumă AFFF</option>
+        </optgroup>
+        <optgroup label="Apă (W)">
+          <option>Extinctor W6 – 6 l apă cu aditivi</option>
+          <option>Extinctor W9 – 9 l apă cu aditivi</option>
+        </optgroup>
+      </select><input type="text" id="extinctor2_buc" placeholder="buc" style="width:38px" onchange="markDirty()"><span>buc.</span></div>
+      <div class="extinctor-grup"><select id="extinctor3" onchange="markDirty()">
+        <option value="">-- extinctor --</option>
+        <optgroup label="Pulbere (P)">
+          <option>Extinctor P6 – 6 kg pulbere ABC</option>
+          <option>Extinctor P9 – 9 kg pulbere ABC</option>
+          <option>Extinctor P12 – 12 kg pulbere ABC</option>
+        </optgroup>
+        <optgroup label="CO₂ (G)">
+          <option>Extinctor G2 – 2 kg CO₂</option>
+          <option>Extinctor G5 – 5 kg CO₂</option>
+          <option>Extinctor G10 – 10 kg CO₂</option>
+        </optgroup>
+        <optgroup label="Spumă (S)">
+          <option>Extinctor S6 – 6 l spumă AFFF</option>
+          <option>Extinctor S9 – 9 l spumă AFFF</option>
+        </optgroup>
+        <optgroup label="Apă (W)">
+          <option>Extinctor W6 – 6 l apă cu aditivi</option>
+          <option>Extinctor W9 – 9 l apă cu aditivi</option>
+        </optgroup>
+      </select><input type="text" id="extinctor3_buc" placeholder="buc" style="width:38px" onchange="markDirty()"><span>buc.</span></div>
+    </div>
+    <textarea class="camp-mare" id="masura7_extra" rows="1" placeholder="alte mijloace: hidrant, ladă nisip, pătură ignifugă etc."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">8. Lucrările cu foc deschis nu se execută dacă sunt condiții de vânt</span></div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand">
+      <span class="bold">9. Pe timpul lucrărilor se asigură supravegherea acestora de către doamna/domnul:</span>
+      <select class="drop large" id="supraveghere9">
+        <option value="">-- selectați --</option>
+        <option value="Bozdoc Dionisie Flavius">Bozdoc Dionisie Flavius</option>
+        <option value="Hintea Simion">Hintea Simion</option>
+        <option value="Căbuț Daniel">Căbuț Daniel</option>
+        <option value="Berekmeri Levente">Berekmeri Levente</option>
+        <option value="Hojda Mirel">Hojda Mirel</option>
+        <option value="Kantot Karoly">Kantot Karoly</option>
+        <option value="Vlad Viorel">Vlad Viorel</option>
+        <option value="Maier Claudiu">Maier Claudiu</option>
+        <option value="Moldovan Cosmin">Moldovan Cosmin</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">10. Șeful serviciului public voluntar/privat pentru situații de urgență este anunțat despre începerea, întreruperea și încheierea lucrării.</span></div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand">
+      <span class="bold">11. Controlul măsurilor de apărare împotriva incendiilor se asigură de d-na/d-nul:</span>
+      <select class="drop large" id="control11">
+        <option value="">-- selectați --</option>
+        <option value="Bozdoc Dionisie Flavius">Bozdoc Dionisie Flavius</option>
+        <option value="Hintea Simion">Hintea Simion</option>
+        <option value="Căbuț Daniel">Căbuț Daniel</option>
+        <option value="Berekmeri Levente">Berekmeri Levente</option>
+        <option value="Hojda Mirel">Hojda Mirel</option>
+        <option value="Kantot Karoly">Kantot Karoly</option>
+        <option value="Vlad Viorel">Vlad Viorel</option>
+        <option value="Maier Claudiu">Maier Claudiu</option>
+        <option value="Moldovan Cosmin">Moldovan Cosmin</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand">
+      <span class="bold">12. Supravegherea lucrărilor cu foc se asigură de către doamna/domnul:</span>
+      <select class="drop large" id="supraveghere12">
+        <option value="">-- selectați --</option>
+        <option value="Bozdoc Dionisie Flavius">Bozdoc Dionisie Flavius</option>
+        <option value="Hintea Simion">Hintea Simion</option>
+        <option value="Căbuț Daniel">Căbuț Daniel</option>
+        <option value="Berekmeri Levente">Berekmeri Levente</option>
+        <option value="Hojda Mirel">Hojda Mirel</option>
+        <option value="Kantot Karoly">Kantot Karoly</option>
+        <option value="Vlad Viorel">Vlad Viorel</option>
+        <option value="Maier Claudiu">Maier Claudiu</option>
+        <option value="Moldovan Cosmin">Moldovan Cosmin</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">13. Incendiul sau orice alt eveniment se anunță la: <u>112</u> prin dispecerat</span></div>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">14. Alte măsuri specifice de apărare împotriva incendiului:</span></div>
+    <textarea class="camp-mare" id="masura14" rows="2" placeholder="descrieți alte măsuri specifice..."></textarea>
+  </div>
+
+  <div class="bloc">
+    <div class="rand"><span class="bold">15. Personalul de execuție, control și supraveghere a fost instruit asupra măsurilor de apărare împotriva incendiului</span></div>
+  </div>
+
+  <table class="tabel-final">
+    <thead>
+      <tr>
+        <th style="width:32%">Responsabili</th>
+        <th style="width:38%">Numele și prenumele</th>
+        <th style="width:30%">Semnătura</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="rol">Emitentul:</td>
+        <td><select class="drop" id="tabel_emitent" style="width:100%">
+          <option value="">-- selectați --</option>
+          <option value="Bozdoc Dionisie Flavius">Bozdoc Dionisie Flavius</option>
+          <option value="Hintea Simion">Hintea Simion</option>
+          <option value="Căbuț Daniel">Căbuț Daniel</option>
+          <option value="Berekmeri Levente">Berekmeri Levente</option>
+          <option value="Hojda Mirel">Hojda Mirel</option>
+          <option value="Kantot Karoly">Kantot Karoly</option>
+          <option value="Vlad Viorel">Vlad Viorel</option>
+          <option value="Maier Claudiu">Maier Claudiu</option>
+          <option value="Moldovan Cosmin">Moldovan Cosmin</option>
+        </select></td>
+        <td><input class="camp" type="text"></td>
+      </tr>
+      <tr>
+        <td class="rol">Șeful sectorului în care se execută lucrările:</td>
+        <td><select class="drop" id="tabel_sef_sector" style="width:100%">
+          <option value="">-- selectați --</option>
+          <option value="Bozdoc Dionisie Flavius">Bozdoc Dionisie Flavius</option>
+          <option value="Hintea Simion">Hintea Simion</option>
+          <option value="Căbuț Daniel">Căbuț Daniel</option>
+          <option value="Berekmeri Levente">Berekmeri Levente</option>
+          <option value="Hojda Mirel">Hojda Mirel</option>
+          <option value="Kantot Karoly">Kantot Karoly</option>
+          <option value="Vlad Viorel">Vlad Viorel</option>
+          <option value="Maier Claudiu">Maier Claudiu</option>
+          <option value="Moldovan Cosmin">Moldovan Cosmin</option>
+        </select></td>
+        <td><input class="camp" type="text"></td>
+      </tr>
+      <tr>
+        <td class="rol" rowspan="6">Executanții lucrărilor cu foc:</td>
+        <td><div class="exec-name" id="exec_row_1"></div></td>
+        <td><input class="camp" type="text"></td>
+      </tr>
+      <tr><td><div class="exec-name" id="exec_row_2"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td><div class="exec-name" id="exec_row_3"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td><div class="exec-name" id="exec_row_4"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td><div class="exec-name" id="exec_row_5"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td><div class="exec-name" id="exec_row_6"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr>
+        <td class="rol">Serv. public vol/privat pentru sit. de urgență</td>
+        <td><input class="camp" type="text" id="serv_urgenta" style="width:100%" placeholder="Numele și prenumele"></td>
+        <td><input class="camp" type="text"></td>
+      </tr>
+    </tbody>
+  </table>
+
+</div><!-- /page -->
+
+<div class="actiuni">
+  <button class="btn btn-names" onclick="openModal()">👥 Liste persoane</button>
+  <button class="btn btn-print" onclick="tipareste()">🖨️ Tipărește</button>
+  <button class="btn btn-pdf" onclick="salvezaPDF()">📄 Salvează PDF</button>
+  <button class="btn btn-reset" onclick="resetForm()">🗑️ Resetează</button>
+</div>
+<div id="print-help" style="display:none;background:#fff3e0;color:#e65100;padding:14px;border-radius:8px;font-size:14px;margin:8px;border:2px solid #ff9800;">
+  <strong>📱 Cum salvați PDF pe telefon:</strong><br><br>
+  Tipărirea automată nu este disponibilă în acest browser/viewer.<br><br>
+  <strong>Chrome Android:</strong> Meniu (⋮) → Partajare → Tipărire → Salvare ca PDF<br>
+  <strong>Safari iOS:</strong> Buton Partajare → Tipărire → apăsați lung pe previzualizare → Salvare ca PDF<br><br>
+  <em>Recomandare: deschideți fișierul direct în Chrome sau Safari.</em>
+  <br><br>
+  <button onclick="document.getElementById('print-help').style.display='none'" style="background:#e65100;color:white;border:none;padding:8px 16px;border-radius:4px;font-size:13px;cursor:pointer;">Închide</button>
+</div>
+<div id="js-status" style="display:none;background:#c8e6c9;color:#1b5e20;padding:8px 14px;border-radius:6px;font-size:13px;margin:8px;text-align:center;">
+  ✓ JavaScript funcționează corect pe acest dispozitiv.
+</div>
+<noscript>
+  <div style="background:#ffcdd2;color:#b71c1c;padding:12px;border-radius:6px;font-size:14px;margin:8px;text-align:center;">
+    ⚠️ JavaScript este dezactivat! Butoanele nu vor funcționa. Deschideți fișierul în Chrome sau Safari.
+  </div>
+</noscript>
+
+<script>
+// ================================================================
+//  CONFIGURARE — EDITAȚI ACESTE LISTE
+// ================================================================
+let PERSOANE = [
+  "Tomulică Marian",
+  "Vlad Vasile",
+  "Bulbescu Adrian",
+  "Dălălău Ioan",
+  "Lazăr Sergiu",
+  "Mare Marian",
+  "Miclea Paul",
+  "Moldovan Alexandru",
+  "Mureșan Marian",
+  "Socaci Rareș",
+  "Ștefan Ioan"
+];
+
+let RESPONSABILI = [
+  "Bozdoc Dionisie Flavius",
+  "Hintea Simion",
+  "Căbuț Daniel",
+  "Berekmeri Levente",
+  "Hojda Mirel",
+  "Kantot Karoly",
+  "Vlad Viorel",
+  "Maier Claudiu",
+  "Moldovan Cosmin"
+];
+
+const ECHIPAMENTE = [
+  "Aparat sudură autogen (oxiacetilenă)",
+  "Aparat sudură electrică (invertor)",
+  "Polizor unghiular",
+  "Agregat de sudură"
+];
+
+const EXTINCTOARE = [
+  { grup: "Pulbere (P)", modele: [
+    "Extinctor P6 – 6 kg pulbere ABC",
+    "Extinctor P9 – 9 kg pulbere ABC",
+    "Extinctor P12 – 12 kg pulbere ABC"
+  ]},
+  { grup: "CO₂ (G)", modele: [
+    "Extinctor G2 – 2 kg CO₂",
+    "Extinctor G5 – 5 kg CO₂",
+    "Extinctor G10 – 10 kg CO₂"
+  ]},
+  { grup: "Spumă (S)", modele: [
+    "Extinctor S6 – 6 l spumă AFFF",
+    "Extinctor S9 – 9 l spumă AFFF"
+  ]},
+  { grup: "Apă (W)", modele: [
+    "Extinctor W6 – 6 l apă cu aditivi",
+    "Extinctor W9 – 9 l apă cu aditivi"
+  ]}
+];
+// ================================================================
+
+let ajutoriSelectati   = [];
+let echipamenteSelectate = [];
+let dateSalvate = true;
+let modalTabActiv = 'exec';
+
+// ---- Helpers date ----
+function toRo(iso) {
+  if (!iso) return null;
+  const [y,m,d] = iso.split('-');
+  return `${d}.${m}.${y}`;
+}
+function toIso(ro) {
+  if (!ro || !ro.includes('.')) return '';
+  const [d,m,y] = ro.split('.');
+  return `${y}-${m}-${d}`;
+}
+
+// ---- Date/time pickers ----
+function setupPickers() {
+  document.querySelectorAll('input[type=date].dp-hidden').forEach(inp => {
+    const shown = document.getElementById(inp.id + '_shown');
+    if (!shown) return;
+    inp.addEventListener('change', () => {
+      if (inp.value) { shown.textContent = toRo(inp.value); shown.classList.remove('empty'); }
+      else           { shown.textContent = 'zz.ll.aaaa';    shown.classList.add('empty'); }
+      markDirty();
+    });
+  });
+  document.querySelectorAll('input[type=time].tp-hidden').forEach(inp => {
+    const shown = document.getElementById(inp.id + '_shown');
+    if (!shown) return;
+    inp.addEventListener('change', () => {
+      if (inp.value) { shown.textContent = inp.value.slice(0,5); shown.classList.remove('empty'); }
+      else           { shown.textContent = 'hh:mm';              shown.classList.add('empty'); }
+      markDirty();
+    });
+  });
+}
+
+function setDatePicker(id, roVal) {
+  const shown = document.getElementById(id + '_shown');
+  const inp   = document.getElementById(id);
+  if (!inp || !shown) return;
+  if (roVal) {
+    inp.value = toIso(roVal); shown.textContent = roVal; shown.classList.remove('empty');
+  } else {
+    inp.value = ''; shown.textContent = inp.type === 'time' ? 'hh:mm' : 'zz.ll.aaaa'; shown.classList.add('empty');
+  }
+}
+
+// ---- Dropdown-uri persoane ----
+const DROP_EXEC_IDS = ['executant_principal'];
+const DROP_RESP_IDS = ['supraveghere9','control11','supraveghere12','tabel_emitent','tabel_sef_sector'];
+
+function optHTML(lista, sel) {
+  let h = '<option value="">-- selectați --</option>';
+  lista.forEach(p => { h += `<option value="${p}"${p===sel?' selected':''}>${p}</option>`; });
+  return h;
+}
+
+function buildAllDropdowns() {
+  DROP_EXEC_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=optHTML(PERSOANE,el.value); });
+  DROP_RESP_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=optHTML(RESPONSABILI,el.value); });
+}
+
+// ---- Extinctoare ----
+function buildExtinctoare() {
+  const c = document.getElementById('extinctoare-container');
+  c.innerHTML = '';
+  for (let i = 1; i <= 3; i++) {
+    let opts = '<option value="">-- extinctor --</option>';
+    EXTINCTOARE.forEach(g => {
+      opts += `<optgroup label="${g.grup}">`;
+      g.modele.forEach(m => opts += `<option>${m}</option>`);
+      opts += '</optgroup>';
+    });
+    c.innerHTML += `<div class="extinctor-grup">
+      <select id="extinctor${i}" onchange="markDirty()">${opts}</select>
+      <input type="text" id="extinctor${i}_buc" placeholder="buc" style="width:38px" onchange="markDirty()">
+      <span>buc.</span></div>`;
+  }
+}
+
+// ---- Multi-select generic ----
+function buildMS(panelId, lista, selectie, maxSel, onToggle) {
+  const panel = document.getElementById(panelId);
+  panel.innerHTML = `<div class="ms-hdr">Selectați (max. ${maxSel})</div>`;
+  lista.forEach(p => {
+    const chk = selectie.includes(p);
+    panel.innerHTML += `<label><input type="checkbox" value="${p}" ${chk?'checked':''}
+      onchange="${onToggle}('${p.replace(/'/g,"\\'")}',this.checked)">${p}</label>`;
+  });
+}
+
+function updateMSDisplay(dispId, selectie, placeholder) {
+  const disp = document.getElementById(dispId);
+  if (selectie.length) { disp.textContent = selectie.join(', '); disp.classList.remove('ph'); }
+  else                 { disp.textContent = placeholder;          disp.classList.add('ph'); }
+}
+
+function toggleMS(which) {
+  const panelId = which === 'ajutori' ? 'ms_ajutori_panel' : 'ms_ech_panel';
+  document.querySelectorAll('.ms-panel.open').forEach(p => { if(p.id!==panelId) p.classList.remove('open'); });
+  document.getElementById(panelId).classList.toggle('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ms-wrapper'))
+    document.querySelectorAll('.ms-panel.open').forEach(p => p.classList.remove('open'));
+});
+
+// Ajutori
+function toggleAjutor(name, checked) {
+  if (checked) {
+    if (ajutoriSelectati.length >= 5) {
+      document.querySelector(`#ms_ajutori_panel input[value="${name}"]`).checked = false; return;
+    }
+    ajutoriSelectati.push(name);
+  } else { ajutoriSelectati = ajutoriSelectati.filter(n=>n!==name); }
+  updateMSDisplay('ms_ajutori_display', ajutoriSelectati, '-- selectați (max 5) --');
+  updateTabelExecutanti();
+  markDirty();
+}
+
+// Echipamente
+function toggleEchipament(name, checked) {
+  if (checked) {
+    if (echipamenteSelectate.length >= 2) {
+      document.querySelector(`#ms_ech_panel input[value="${name}"]`).checked = false; return;
+    }
+    echipamenteSelectate.push(name);
+  } else { echipamenteSelectate = echipamenteSelectate.filter(n=>n!==name); }
+  updateMSDisplay('ms_ech_display', echipamenteSelectate, '-- selectați (max 2) --');
+  markDirty();
+}
+
+function buildAllMS() {
+  buildMS('ms_ajutori_panel', PERSOANE,    ajutoriSelectati,    5, 'toggleAjutor');
+  buildMS('ms_ech_panel',     ECHIPAMENTE, echipamenteSelectate, 2, 'toggleEchipament');
+}
+
+function updateTabelExecutanti() {
+  const principal = document.getElementById('executant_principal').value;
+  const toti = principal ? [principal,...ajutoriSelectati] : [...ajutoriSelectati];
+  for (let i=1;i<=6;i++) document.getElementById(`exec_row_${i}`).textContent = toti[i-1]||'';
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id==='executant_principal') { updateTabelExecutanti(); markDirty(); }
+});
+
+// ---- Dirty flag ----
+function markDirty() { dateSalvate = false; }
+document.addEventListener('input', markDirty);
+document.addEventListener('change', markDirty);
+
+window.addEventListener('beforeunload', e => {
+  if (!dateSalvate) { e.preventDefault(); e.returnValue='Aveți date nesalvate. Doriți să părăsiți pagina?'; }
+});
+
+// ---- Marchează elementele vide (pentru print/PDF) ----
+function marcheazaVide() {
+  // Textareas goale
+  document.querySelectorAll('textarea.camp-mare').forEach(ta => {
+    ta.classList.toggle('vide', ta.value.trim() === '');
+  });
+  // Extinctoare goale — ascunde întregul grup
+  for (let i = 1; i <= 3; i++) {
+    const sel = document.getElementById('extinctor' + i);
+    const grup = sel && sel.closest('.extinctor-grup');
+    if (grup) grup.classList.toggle('vide', !sel.value);
+  }
+  // Rânduri executanți goale din tabel
+  for (let i = 1; i <= 6; i++) {
+    const div = document.getElementById('exec_row_' + i);
+    const tr = div && div.closest('tr');
+    if (tr) tr.classList.toggle('exec-vide', !div.textContent.trim());
+  }
+  // Selecturi necompletate (pct 9, 11, 12, emitent, șef sector)
+  ['supraveghere9','control11','supraveghere12','tabel_emitent','tabel_sef_sector'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('vide', !el.value);
+  });
+}
+
+function dezMarcheazaVide() {
+  document.querySelectorAll('.vide').forEach(el => el.classList.remove('vide'));
+  document.querySelectorAll('.exec-vide').forEach(el => el.classList.remove('exec-vide'));
+}
+
+// ---- PDF ----
+function buildFilename() {
+  const nr  = document.getElementById('numar').value.trim() || 'NR';
+  const inp = document.getElementById('data_emitere');
+  const data = inp && inp.value ? toRo(inp.value) : (document.getElementById('data_emitere_shown').textContent.replace('zz.ll.aaaa','DATA'));
+  const loc = document.getElementById('locatia').value.trim().replace(/[\\/:*?"<>|]/g,'_') || 'LOCATIE';
+  return `PLFOK ${nr} din ${data} ${loc}`;
+}
+
+function showPrintHelp() {
+  var el = document.getElementById('print-help');
+  if (el) { el.style.display = 'block'; el.scrollIntoView({behavior:'smooth'}); }
+}
+
+function faPrint(cuFilename) {
+  var printOK = false;
+  var prevTitle = document.title;
+  if (cuFilename) document.title = buildFilename();
+  marcheazaVide();
+  window.addEventListener('afterprint', function handler() {
+    window.removeEventListener('afterprint', handler);
+    printOK = true;
+    document.title = prevTitle;
+    dezMarcheazaVide();
+    if (cuFilename) dateSalvate = true;
+  });
+  try { window.print(); } catch(e) {}
+  setTimeout(function() {
+    if (!printOK) {
+      document.title = prevTitle;
+      dezMarcheazaVide();
+      showPrintHelp();
+    }
+  }, 4000);
+}
+
+function salvezaPDF() { faPrint(true); }
+function tipareste()  { faPrint(false); }
+
+// ---- Reset ----
+function resetForm() {
+  var ok = false;
+  try { ok = confirm('Resetați toate câmpurile formularului?'); } catch(e) { ok = true; }
+  if (!ok) return;
+  document.querySelectorAll('input.camp, textarea.camp-mare').forEach(el => el.value='');
+  document.querySelectorAll('select.drop, #ce_executa').forEach(el => el.value='');
+  ['data_emitere','data_inceput','data_sfarsit','buletin_data'].forEach(id=>setDatePicker(id,''));
+  ['ora_inceput','ora_sfarsit'].forEach(id=>setDatePicker(id,''));
+  ajutoriSelectati=[]; echipamenteSelectate=[];
+  updateMSDisplay('ms_ajutori_display', [], '-- selectați (max 5) --');
+  updateMSDisplay('ms_ech_display', [], '-- selectați (max 2) --');
+  buildAllMS();
+  updateTabelExecutanti();
+  try { localStorage.removeItem('permis_foc_draft'); } catch(e){}
+  dateSalvate=true;
+  setDataDefault();
+}
+
+// ---- Modal ----
+function openModal() { switchTab(modalTabActiv); document.getElementById('modalPersoane').classList.add('open'); }
+function closeModal() { document.getElementById('modalPersoane').classList.remove('open'); }
+function switchTab(tab) {
+  modalTabActiv = tab;
+  document.querySelectorAll('.modal-tab').forEach((t,i) => t.classList.toggle('active',(i===0)===(tab==='exec')));
+  document.getElementById('modal-desc-exec').style.display = tab==='exec' ? '' : 'none';
+  document.getElementById('modal-desc-resp').style.display = tab==='resp' ? '' : 'none';
+  document.getElementById('listaPersoaneText').value = (tab==='exec' ? PERSOANE : RESPONSABILI).join('\n');
+}
+function aplicaLista() {
+  const linii = document.getElementById('listaPersoaneText').value.split('\n').map(l=>l.trim()).filter(l=>l);
+  if (!linii.length) { alert('Lista nu poate fi goală!'); return; }
+  if (modalTabActiv==='exec') { PERSOANE=linii; }
+  else { RESPONSABILI=linii; }
+  buildAllDropdowns();
+  buildAllMS();
+  closeModal();
+}
+
+// ---- Auto-save ----
+function autoSave() {
+  const data={};
+  document.querySelectorAll('input.camp[id], select[id], textarea.camp-mare[id]').forEach(el=>{data[el.id]=el.value;});
+  ['data_emitere','data_inceput','data_sfarsit','buletin_data'].forEach(id=>{
+    const el=document.getElementById(id); if(el) data['_dp_'+id]=el.value;
+  });
+  ['ora_inceput','ora_sfarsit'].forEach(id=>{
+    const el=document.getElementById(id); if(el) data['_tp_'+id]=el.value;
+  });
+  for(let i=1;i<=3;i++){
+    const s=document.getElementById('extinctor'+i); if(s) data['extinctor'+i]=s.value;
+    const b=document.getElementById('extinctor'+i+'_buc'); if(b) data['extinctor'+i+'_buc']=b.value;
+  }
+  data['_ajutori']=ajutoriSelectati;
+  data['_echipamente']=echipamenteSelectate;
+  try { localStorage.setItem('permis_foc_draft', JSON.stringify(data)); } catch(e){}
+}
+setInterval(autoSave, 10000);
+
+// ---- Restaurare ----
+function restoreDraft() {
+  const saved=localStorage.getItem('permis_foc_draft');
+  if (!saved) return;
+  try {
+    const data=JSON.parse(saved);
+    ['data_emitere','data_inceput','data_sfarsit','buletin_data'].forEach(id=>{
+      const iso=data['_dp_'+id]; if(iso) setDatePicker(id, toRo(iso));
+    });
+    ['ora_inceput','ora_sfarsit'].forEach(id=>{
+      const v=data['_tp_'+id];
+      if(v){ const inp=document.getElementById(id); const sh=document.getElementById(id+'_shown');
+        if(inp&&sh){inp.value=v; sh.textContent=v.slice(0,5); sh.classList.remove('empty');} }
+    });
+    Object.entries(data).forEach(([id,val])=>{
+      if(id.startsWith('_')) return;
+      const el=document.getElementById(id); if(el) el.value=val;
+    });
+    ajutoriSelectati    = data['_ajutori']     || [];
+    echipamenteSelectate = data['_echipamente'] || [];
+    updateMSDisplay('ms_ajutori_display', ajutoriSelectati,    '-- selectați (max 5) --');
+    updateMSDisplay('ms_ech_display',     echipamenteSelectate,'-- selectați (max 2) --');
+    buildAllMS();
+    updateTabelExecutanti();
+  } catch(e){ console.warn('Restaurare eșuată',e); }
+}
+
+function setDataDefault() {
+  const inp=document.getElementById('data_emitere');
+  if (!inp.value) {
+    const iso=new Date().toISOString().slice(0,10);
+    inp.value=iso;
+    const sh=document.getElementById('data_emitere_shown');
+    sh.textContent=toRo(iso); sh.classList.remove('empty');
+  }
+}
+
+// ---- INIT ----
+// Arată indicatorul că JS funcționează
+(function(){ var el=document.getElementById('js-status'); if(el) el.style.display='block'; })();
+
+// Listele se populează IMEDIAT (script-ul e la finalul body-ului,
+// deci toate elementele DOM există deja)
+try { buildAllDropdowns(); } catch(e) { console.error('buildAllDropdowns:', e); }
+try { buildExtinctoare(); }  catch(e) { console.error('buildExtinctoare:', e); }
+try { buildAllMS(); }        catch(e) { console.error('buildAllMS:', e); }
+
+// Restul necesită DOM complet încărcat
+let initDone = false;
+function init() {
+  if (initDone) return;
+  initDone = true;
+  try { setupPickers(); }           catch(e) { console.error('setupPickers:', e); }
+  try { restoreDraft(); }           catch(e) { console.error('restoreDraft:', e); }
+  try { setDataDefault(); }         catch(e) { console.error('setDataDefault:', e); }
+  try { updateTabelExecutanti(); }  catch(e) { console.error('updateTabelExecutanti:', e); }
+  dateSalvate = true;
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
