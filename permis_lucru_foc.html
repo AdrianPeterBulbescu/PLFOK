@@ -115,7 +115,7 @@ select.drop.large { flex: 2; min-width: 170px; }
 
 /* ===== PRINT — O SINGURĂ PAGINĂ A4 ===== */
 @media print {
-  @page { size: A4 portrait; margin: 0; }
+  @page { size: A4 portrait; margin: 8mm 10mm; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: white !important; padding: 0 !important; }
   .actiuni, .modal-overlay, #js-status, #print-help { display: none !important; }
@@ -124,11 +124,10 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Scalare globală pentru a garanta o singură pagină */
   .page {
     box-shadow: none !important;
-    padding: 6mm 8mm !important;
+    padding: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
-    margin: 0 auto !important;
-    zoom: 0.92;
+    margin: 0 !important;
   }
 
   /* Fonturi compacte */
