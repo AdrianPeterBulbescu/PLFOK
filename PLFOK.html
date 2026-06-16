@@ -117,7 +117,8 @@ select.drop.large { flex: 2; min-width: 170px; }
 
 /* ===== PRINT — O SINGURĂ PAGINĂ A4 ===== */
 @media print {
-  @page { size: A4 portrait; margin: 8mm 10mm 8mm 20mm; }
+  @page { size: A4 portrait; margin: 6mm 8mm 6mm 18mm; }
+  html { zoom: 0.95; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: white !important; padding: 0 !important; }
   .actiuni, .modal-overlay, #js-status, #print-help { display: none !important; }
@@ -179,6 +180,12 @@ select.drop.large { flex: 2; min-width: 170px; }
   .dp-shown.empty, .tp-shown.empty { visibility: hidden !important; }
   .ms-display.ph { visibility: hidden !important; }
   .dp-icon, .tp-icon { display: none !important; }
+
+  /* Fără linii întrerupte la print */
+  input.camp, textarea.camp-mare { border: none !important; border-bottom: none !important; }
+  select.drop, .extinctor-grup select { border-bottom: none !important; }
+  .dp-shown, .tp-shown { border-bottom: none !important; }
+  .ms-display { border-bottom: none !important; }
 
   /* Placeholder-uri invizibile */
   input.camp::placeholder, textarea.camp-mare::placeholder { color: transparent !important; -webkit-text-fill-color: transparent !important; }
@@ -305,7 +312,7 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
   <!-- Bloc 1 -->
   <div class="bloc">
     <div class="rand">
-      <span>Se eliberează prezentul permis de lucru cu foc domnului:</span>
+      <span class="bold">Se eliberează prezentul permis de lucru cu foc domnului:</span>
       <select class="drop large" id="executant_principal">
         <option value="">-- selectați --</option>
         <option value="Tomulică Marian">Tomulică Marian</option>
@@ -323,7 +330,7 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
       <span>,</span>
     </div>
     <div class="rand top-border">
-      <span>ajutat de domnii:</span>
+      <span class="bold">ajutat de domnii:</span>
       <div class="ms-wrapper" style="flex:1; min-width:200px;">
         <div class="ms-display ph" id="ms_ajutori_display" onclick="toggleMS('ajutori')">-- selectați (max 5) --</div>
         <div class="ms-panel" id="ms_ajutori_panel">
@@ -343,7 +350,7 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
       </div>
     </div>
     <div class="rand top-border">
-      <span>care urmează să execute:</span>
+      <span class="bold">care urmează să execute:</span>
       <select class="drop large" id="ce_executa">
         <option value="">-- selectați tipul lucrării --</option>
         <option>Tăiere</option>
@@ -612,7 +619,7 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
         <td><input class="camp" type="text"></td>
       </tr>
       <tr>
-        <td class="rol">Șeful sectorului în care se execută lucrările:</td>
+        <td class="rol">Șeful sectorului pentru lucrări:</td>
         <td><select class="drop" id="tabel_sef_sector" style="width:100%">
           <option value="">-- selectați --</option>
           <option value="Bozdoc Dionisie Flavius">Bozdoc Dionisie Flavius</option>
