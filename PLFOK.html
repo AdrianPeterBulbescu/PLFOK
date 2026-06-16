@@ -115,13 +115,21 @@ select.drop.large { flex: 2; min-width: 170px; }
 
 /* ===== PRINT — O SINGURĂ PAGINĂ A4 ===== */
 @media print {
-  @page { size: A4 portrait; margin: 8mm 10mm; }
+  @page { size: A4 portrait; margin: 8mm 10mm 8mm 20mm; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: white !important; padding: 0 !important; }
   .actiuni, .modal-overlay, #js-status, #print-help { display: none !important; }
-  .ms-panel { display: none !important; }
 
-  /* Scalare globală pentru a garanta o singură pagină */
+  /* Reset CSS mobil — critice pentru print corect din Safari iOS */
+  .ms-display { display: block !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-height: 16px !important; background: transparent !important; }
+  .ms-display::after { display: none !important; }
+  .ms-panel { display: none !important; }
+  .dp-shown { display: inline-flex !important; }
+  .dp-hidden { position: absolute !important; opacity: 0 !important; width: 100% !important; height: 100% !important; }
+  .tp-shown { display: inline-flex !important; }
+  .tp-hidden { position: absolute !important; opacity: 0 !important; width: 100% !important; height: 100% !important; }
+
+  /* Pagina */
   .page {
     box-shadow: none !important;
     padding: 0 !important;
@@ -139,9 +147,6 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Rânduri mai strânse */
   .rand { padding: 1px 5px !important; gap: 2px !important; }
 
-  /* Multi-select — o singură linie la print */
-  .ms-display { white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-height: 16px !important; }
-
   /* Textarea — ascunde dacă goală, altfel compactă */
   textarea.camp-mare { padding: 1px 5px !important; min-height: 0 !important; resize: none !important; background: transparent !important; border-top: 1px solid #ccc !important; overflow: hidden !important; }
   textarea.camp-mare.vide { display: none !important; }
@@ -157,8 +162,12 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Rânduri executanți goale */
   tr.exec-vide { display: none !important; }
 
-  /* Selecturi și date */
-  select.drop, .extinctor-grup select { background: transparent !important; }
+  /* Selecturi — ascunde săgețile native */
+  select.drop, .extinctor-grup select {
+    background: transparent !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
   select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
   .dp-shown.empty, .tp-shown.empty { visibility: hidden !important; }
   .ms-display.ph { visibility: hidden !important; }
