@@ -163,7 +163,7 @@ select.drop.large { flex: 2; min-width: 170px; }
   .extinctor-grup.vide { display: none !important; }
 
   /* Rânduri executanți goale */
-  tr.exec-vide { visibility: collapse !important; }
+  tr.exec-vide { display: none !important; }
 
   /* Selecturi — înlocuite cu text simplu la print */
   select[data-ph="1"] { display: none !important; }
@@ -176,7 +176,7 @@ select.drop.large { flex: 2; min-width: 170px; }
     -webkit-text-fill-color: #000 !important;
     opacity: 1 !important;
   }
-  select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
+  select.drop.vide { color: transparent !important; -webkit-text-fill-color: transparent !important; border-bottom-color: transparent !important; }
   .dp-shown.empty, .tp-shown.empty { visibility: hidden !important; }
   .ms-display.ph { visibility: hidden !important; }
   .dp-icon, .tp-icon { display: none !important; }
@@ -635,15 +635,15 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
         <td><input class="camp" type="text"></td>
       </tr>
       <tr>
-        <td class="rol" rowspan="6">Executanții lucrărilor cu foc:</td>
+        <td class="rol" style="border-bottom:none">Executanții lucrărilor cu foc:</td>
         <td><div class="exec-name" id="exec_row_1"></div></td>
         <td><input class="camp" type="text"></td>
       </tr>
-      <tr><td><div class="exec-name" id="exec_row_2"></div></td><td><input class="camp" type="text"></td></tr>
-      <tr><td><div class="exec-name" id="exec_row_3"></div></td><td><input class="camp" type="text"></td></tr>
-      <tr><td><div class="exec-name" id="exec_row_4"></div></td><td><input class="camp" type="text"></td></tr>
-      <tr><td><div class="exec-name" id="exec_row_5"></div></td><td><input class="camp" type="text"></td></tr>
-      <tr><td><div class="exec-name" id="exec_row_6"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td class="rol" style="border-top:none;border-bottom:none"></td><td><div class="exec-name" id="exec_row_2"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td class="rol" style="border-top:none;border-bottom:none"></td><td><div class="exec-name" id="exec_row_3"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td class="rol" style="border-top:none;border-bottom:none"></td><td><div class="exec-name" id="exec_row_4"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td class="rol" style="border-top:none;border-bottom:none"></td><td><div class="exec-name" id="exec_row_5"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr><td class="rol" style="border-top:none"></td><td><div class="exec-name" id="exec_row_6"></div></td><td><input class="camp" type="text"></td></tr>
       <tr>
         <td colspan="3" class="rol" style="text-align:left; font-size:11px; padding:3px 7px;">Serv. public voluntar/privat pentru situații de urgență:</td>
       </tr>
