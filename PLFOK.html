@@ -140,8 +140,8 @@ select.drop.large { flex: 2; min-width: 170px; }
     margin: 0 !important;
   }
 
-  /* Fonturi compacte */
-  * { font-size: 8pt !important; line-height: 1.25 !important; }
+  /* Fonturi compacte, culoare neagră forțată */
+  * { font-size: 8pt !important; line-height: 1.25 !important; color: #000 !important; -webkit-text-fill-color: #000 !important; }
   .titlu { font-size: 9.5pt !important; margin: 4px 0 2px !important; }
   .nr-row { margin-bottom: 4px !important; }
   .header .unitate { font-size: 8pt !important; }
@@ -179,7 +179,7 @@ select.drop.large { flex: 2; min-width: 170px; }
   .dp-icon, .tp-icon { display: none !important; }
 
   /* Placeholder-uri invizibile */
-  input.camp::placeholder, textarea.camp-mare::placeholder { color: transparent !important; }
+  input.camp::placeholder, textarea.camp-mare::placeholder { color: transparent !important; -webkit-text-fill-color: transparent !important; }
   input.camp:placeholder-shown { border-bottom-color: transparent !important; }
 }
 
