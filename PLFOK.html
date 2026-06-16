@@ -164,11 +164,12 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Rânduri executanți goale */
   tr.exec-vide { visibility: collapse !important; }
 
-  /* Selecturi — ascunde săgețile native */
+  /* Selecturi — ascunde săgețile native, forțează culoare neagră */
   select.drop, .extinctor-grup select {
     background: transparent !important;
     -webkit-appearance: none !important;
     appearance: none !important;
+    color: #333 !important;
   }
   select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
   .dp-shown.empty, .tp-shown.empty { visibility: hidden !important; }
