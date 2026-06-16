@@ -169,7 +169,7 @@ select.drop.large { flex: 2; min-width: 170px; }
     background: transparent !important;
     -webkit-appearance: none !important;
     appearance: none !important;
-    color: #333 !important;
+    color: #000 !important;
   }
   select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
   .dp-shown.empty, .tp-shown.empty { visibility: hidden !important; }
@@ -807,7 +807,7 @@ function buildExtinctoare() {
     });
     c.innerHTML += `<div class="extinctor-grup">
       <select id="extinctor${i}" onchange="markDirty()">${opts}</select>
-      <input type="text" id="extinctor${i}_buc" placeholder="buc" style="width:38px" onchange="markDirty()">
+      <input type="text" class="camp" id="extinctor${i}_buc" placeholder="buc" style="width:38px" onchange="markDirty()">
       <span>buc.</span></div>`;
   }
 }
