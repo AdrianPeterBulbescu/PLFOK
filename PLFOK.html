@@ -117,7 +117,7 @@ select.drop.large { flex: 2; min-width: 170px; }
 
 /* ===== PRINT — O SINGURĂ PAGINĂ A4 ===== */
 @media print {
-  @page { size: A4 portrait; margin: 6mm 8mm 6mm 18mm; }
+  @page { size: A4 portrait; margin: 6mm 8mm 6mm 22mm; }
   html { zoom: 0.95; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: white !important; padding: 0 !important; }
@@ -150,9 +150,8 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Rânduri mai strânse */
   .rand { padding: 1px 5px !important; gap: 2px !important; }
 
-  /* Textarea — ascunde dacă goală, altfel compactă */
-  textarea.camp-mare { padding: 1px 5px !important; min-height: 0 !important; resize: none !important; background: transparent !important; border-top: 1px solid #ccc !important; overflow: hidden !important; }
-  textarea.camp-mare.vide { display: none !important; }
+  /* Textarea — vizibilă chiar goală (formular umple pagina), compactă */
+  textarea.camp-mare { padding: 1px 5px !important; min-height: 22px !important; resize: none !important; background: transparent !important; border-top: 1px solid #ccc !important; overflow: hidden !important; }
 
   /* Tabel compact */
   .tabel-final th, .tabel-final td { padding: 1px 4px !important; }
@@ -213,6 +212,41 @@ body.compact .extinctor-row { padding: 2px 5px !important; gap: 5px !important; 
 body.compact .dp-icon, body.compact .tp-icon { display: none !important; }
 body.compact .extinctor-grup.vide { display: none !important; }
 body.compact tr.exec-vide { display: none !important; }
+
+/* ===== CENTRALIZATOR ===== */
+#centralizator-view { display: none; }
+body.show-cztr #centralizator-view { display: block; }
+body.show-cztr .page, body.show-cztr .actiuni, body.show-cztr #print-help, body.show-cztr #js-status { display: none !important; }
+
+.cztr-header { background: #1565c0; color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.cztr-title { font-size: 16px; font-weight: bold; }
+.cztr-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.cztr-content { padding: 16px; overflow-x: auto; }
+.cztr-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cztr-table th { background: #e3f2fd; border: 1px solid #90caf9; padding: 6px 8px; text-align: center; font-weight: bold; white-space: nowrap; }
+.cztr-table td { border: 1px solid #ccc; padding: 4px 7px; vertical-align: top; }
+.cztr-table tr:nth-child(even) td { background: #f9f9f9; }
+.cztr-table .col-nr { width: 40px; text-align: center; font-weight: bold; }
+.cztr-table .col-data { white-space: nowrap; }
+.cztr-empty { text-align: center; color: #999; padding: 30px; font-size: 14px; font-style: italic; }
+.btn-cztr { background: #0277bd; color: white; }
+.btn-cztr-back { background: #546e7a; color: white; }
+.btn-cztr-del { background: #c62828; color: white; padding: 3px 8px; font-size: 11px; border: none; border-radius: 3px; cursor: pointer; white-space: nowrap; }
+.btn-cztr-del:hover { opacity: 0.8; }
+.btn-cztr-print { background: #2e7d32; color: white; }
+.btn-cztr-renr { background: #e65100; color: white; }
+
+@media print {
+  body.print-cztr .page, body.print-cztr .actiuni, body.print-cztr #print-help, body.print-cztr #js-status { display: none !important; }
+  body.print-cztr #centralizator-view { display: block !important; }
+  body.print-cztr .cztr-header { background: #1565c0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 6px 10px !important; }
+  body.print-cztr .cztr-btns { display: none !important; }
+  body.print-cztr .cztr-content { padding: 4px !important; overflow: visible !important; }
+  body.print-cztr .cztr-table { font-size: 7.5pt !important; }
+  body.print-cztr .cztr-table th, body.print-cztr .cztr-table td { padding: 2px 4px !important; }
+  body.print-cztr .col-del { display: none !important; }
+  body.print-cztr html { zoom: 1 !important; }
+}
 body.compact select.drop.vide { color: transparent !important; border-bottom-color: transparent !important; }
 
 /* ===== MOBIL ===== */
@@ -314,20 +348,8 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
   <div class="bloc">
     <div class="rand">
       <span class="bold">Se eliberează prezentul permis de lucru cu foc domnului:</span>
-      <select class="drop large" id="executant_principal">
-        <option value="">-- selectați --</option>
-        <option value="Tomulică Marian">Tomulică Marian</option>
-        <option value="Vlad Vasile">Vlad Vasile</option>
-        <option value="Bulbescu Adrian">Bulbescu Adrian</option>
-        <option value="Dălălău Ioan">Dălălău Ioan</option>
-        <option value="Lazăr Sergiu">Lazăr Sergiu</option>
-        <option value="Mare Marian">Mare Marian</option>
-        <option value="Miclea Paul">Miclea Paul</option>
-        <option value="Moldovan Alexandru">Moldovan Alexandru</option>
-        <option value="Mureșan Marian">Mureșan Marian</option>
-        <option value="Socaci Rareș">Socaci Rareș</option>
-        <option value="Ștefan Ioan">Ștefan Ioan</option>
-      </select>
+      <input class="camp large" type="text" id="executant_principal" list="executanti_list" placeholder="-- selectați sau scrieți --" autocomplete="off">
+      <datalist id="executanti_list"></datalist>
       <span>,</span>
     </div>
     <div class="rand top-border">
@@ -658,11 +680,44 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
 
 </div><!-- /page -->
 
+<!-- ===== CENTRALIZATOR ===== -->
+<div id="centralizator-view">
+  <div class="cztr-header">
+    <div class="cztr-title">📋 Centralizator Permise de Lucru cu Foc</div>
+    <div class="cztr-btns">
+      <button class="btn btn-cztr-print" onclick="printCztr()">🖨️ Tipărește</button>
+      <button class="btn btn-cztr-renr" onclick="renumeroteaza()">🔢 Renumerotează</button>
+      <button class="btn btn-cztr-back" onclick="toggleCztr(false)">← Înapoi la formular</button>
+    </div>
+  </div>
+  <div class="cztr-content">
+    <table class="cztr-table">
+      <thead>
+        <tr>
+          <th class="col-nr">Nr.</th>
+          <th class="col-data">Data emiterii</th>
+          <th>Executant principal</th>
+          <th>Ajutori</th>
+          <th>Tip lucrare / Echipament</th>
+          <th>Locația</th>
+          <th>Interval lucru</th>
+          <th>Emitent</th>
+          <th>Șef sector</th>
+          <th class="col-del">Șterge</th>
+        </tr>
+      </thead>
+      <tbody id="cztr-body"></tbody>
+    </table>
+    <div class="cztr-empty" id="cztr-empty">Niciun permis salvat încă.</div>
+  </div>
+</div>
+
 <div class="actiuni">
   <button class="btn btn-names" onclick="openModal()">👥 Liste persoane</button>
   <button class="btn btn-print" onclick="tipareste()">🖨️ Tipărește</button>
   <button class="btn btn-pdf" onclick="salvezaPDF()">📄 Salvează PDF</button>
   <button class="btn btn-reset" onclick="resetForm()">🗑️ Resetează</button>
+  <button class="btn btn-cztr" onclick="toggleCztr(true)">📋 Centralizator</button>
 </div>
 <div id="print-help" style="display:none;background:#fff3e0;color:#e65100;padding:14px;border-radius:8px;font-size:14px;margin:8px;border:2px solid #ff9800;">
   <strong>📱 Cum salvați PDF pe telefon:</strong><br><br>
@@ -792,7 +847,6 @@ function setDatePicker(id, roVal) {
 }
 
 // ---- Dropdown-uri persoane ----
-const DROP_EXEC_IDS = ['executant_principal'];
 const DROP_RESP_IDS = ['supraveghere9','control11','supraveghere12','tabel_emitent','tabel_sef_sector'];
 
 function optHTML(lista, sel) {
@@ -802,7 +856,8 @@ function optHTML(lista, sel) {
 }
 
 function buildAllDropdowns() {
-  DROP_EXEC_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=optHTML(PERSOANE,el.value); });
+  const dl = document.getElementById('executanti_list');
+  if (dl) { dl.innerHTML = ''; PERSOANE.forEach(p => { const o = document.createElement('option'); o.value = p; dl.appendChild(o); }); }
   DROP_RESP_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=optHTML(RESPONSABILI,el.value); });
 }
 
@@ -891,6 +946,9 @@ function updateTabelExecutanti() {
 document.addEventListener('change', e => {
   if (e.target.id==='executant_principal') { updateTabelExecutanti(); markDirty(); }
 });
+document.addEventListener('input', e => {
+  if (e.target.id==='executant_principal') { updateTabelExecutanti(); markDirty(); }
+});
 
 // ---- Dirty flag ----
 function markDirty() { dateSalvate = false; }
@@ -963,6 +1021,7 @@ function restoreSelecte() {
 
 function faPrint(cuFilename) {
   var printOK = false;
+  var salvat = false;
   var prevTitle = document.title;
   if (cuFilename) document.title = buildFilename();
   marcheazaVide();
@@ -973,7 +1032,7 @@ function faPrint(cuFilename) {
     document.title = prevTitle;
     dezMarcheazaVide();
     restoreSelecte();
-    if (cuFilename) dateSalvate = true;
+    if (cuFilename && !salvat) { salvat=true; dateSalvate = true; salveazaInCztr(); updateAutoNr(); }
   });
   try { window.print(); } catch(e) {}
   setTimeout(function() {
@@ -982,6 +1041,7 @@ function faPrint(cuFilename) {
       dezMarcheazaVide();
       restoreSelecte();
       showPrintHelp();
+      if (cuFilename && !salvat) { salvat=true; dateSalvate = true; salveazaInCztr(); updateAutoNr(); }
     }
   }, 4000);
 }
@@ -1005,6 +1065,127 @@ function resetForm() {
   updateTabelExecutanti();
   try { localStorage.removeItem('permis_foc_draft'); } catch(e){}
   dateSalvate=true;
+  updateAutoNr();
+}
+
+// ---- Centralizator ----
+function getCztr() {
+  try { return JSON.parse(localStorage.getItem('permis_foc_centralizator') || '[]'); } catch(e) { return []; }
+}
+function saveCztr(arr) {
+  try { localStorage.setItem('permis_foc_centralizator', JSON.stringify(arr)); } catch(e) {}
+}
+
+function salveazaInCztr() {
+  const cztr = getCztr();
+  const nr = document.getElementById('numar').value.trim();
+  const existIdx = nr ? cztr.findIndex(e => String(e.nr) === nr) : -1;
+  const entry = {
+    nr: nr || (cztr.length + 1),
+    dataEmitere: document.getElementById('data_emitere_shown') ? document.getElementById('data_emitere_shown').textContent.replace('zz.ll.aaaa','') : '',
+    executant: document.getElementById('executant_principal').value,
+    ajutori: ajutoriSelectati.join(', '),
+    tipLucru: document.getElementById('ce_executa') ? document.getElementById('ce_executa').value : '',
+    echipament: echipamenteSelectate.join(', '),
+    locatie: document.getElementById('locatia') ? document.getElementById('locatia').value : '',
+    dataInceput: document.getElementById('data_inceput_shown') ? document.getElementById('data_inceput_shown').textContent.replace('zz.ll.aaaa','') : '',
+    oraInceput: document.getElementById('ora_inceput_shown') ? document.getElementById('ora_inceput_shown').textContent.replace('hh:mm','') : '',
+    dataSfarsit: document.getElementById('data_sfarsit_shown') ? document.getElementById('data_sfarsit_shown').textContent.replace('zz.ll.aaaa','') : '',
+    oraSfarsit: document.getElementById('ora_sfarsit_shown') ? document.getElementById('ora_sfarsit_shown').textContent.replace('hh:mm','') : '',
+    emitent: document.getElementById('tabel_emitent') ? document.getElementById('tabel_emitent').value : '',
+    sefSector: document.getElementById('tabel_sef_sector') ? document.getElementById('tabel_sef_sector').value : ''
+  };
+  if (existIdx >= 0) { cztr[existIdx] = entry; } else { cztr.push(entry); }
+  saveCztr(cztr);
+  renderCztr();
+}
+
+function renderCztr() {
+  const cztr = getCztr();
+  const tbody = document.getElementById('cztr-body');
+  const empty = document.getElementById('cztr-empty');
+  if (!tbody) return;
+  if (!cztr.length) {
+    tbody.innerHTML = '';
+    if (empty) empty.style.display = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  tbody.innerHTML = cztr.map((e, i) => {
+    const interval = [e.dataInceput, e.oraInceput, e.dataSfarsit || e.dataInceput !== e.dataSfarsit ? '– '+e.dataSfarsit : '', e.oraSfarsit].filter(x=>x).join(' ');
+    const tip = [e.tipLucru, e.echipament ? '<em>'+e.echipament+'</em>' : ''].filter(x=>x).join('<br>');
+    return `<tr>
+      <td class="col-nr">${e.nr}</td>
+      <td class="col-data">${e.dataEmitere||''}</td>
+      <td>${e.executant||''}</td>
+      <td>${e.ajutori||''}</td>
+      <td>${tip}</td>
+      <td>${e.locatie||''}</td>
+      <td>${interval}</td>
+      <td>${e.emitent||''}</td>
+      <td>${e.sefSector||''}</td>
+      <td class="col-del"><button class="btn-cztr-del" onclick="stergeCztr(${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function stergeCztr(idx) {
+  if (!confirm('Ștergeți această intrare din centralizator?')) return;
+  const cztr = getCztr();
+  cztr.splice(idx, 1);
+  saveCztr(cztr);
+  renderCztr();
+  updateAutoNr();
+}
+
+function renumeroteaza() {
+  if (!confirm('Renumerotați toate permisele consecutiv de la 1?')) return;
+  const cztr = getCztr();
+  cztr.forEach((e, i) => { e.nr = i + 1; });
+  saveCztr(cztr);
+  renderCztr();
+  updateAutoNr();
+}
+
+function updateAutoNr() {
+  try {
+    const cztr = getCztr();
+    const maxNr = cztr.reduce((m, e) => Math.max(m, parseInt(e.nr)||0), 0);
+    const inp = document.getElementById('numar');
+    if (inp) inp.value = maxNr + 1;
+  } catch(e) {}
+}
+
+function setAutoNr() {
+  try {
+    const cztr = getCztr();
+    const maxNr = cztr.reduce((m, e) => Math.max(m, parseInt(e.nr)||0), 0);
+    const inp = document.getElementById('numar');
+    if (inp && !inp.value.trim()) inp.value = maxNr + 1;
+  } catch(e) {}
+}
+
+function toggleCztr(show) {
+  document.body.classList.toggle('show-cztr', show);
+  if (show) renderCztr();
+}
+
+function printCztr() {
+  const style = document.createElement('style');
+  style.id = 'cztr-print-override';
+  style.textContent = '@media print { @page { size: A4 landscape !important; margin: 8mm 8mm 8mm 20mm !important; } html { zoom: 1 !important; } }';
+  document.head.appendChild(style);
+  document.body.classList.add('print-cztr');
+  window.addEventListener('afterprint', function h() {
+    window.removeEventListener('afterprint', h);
+    document.getElementById('cztr-print-override')?.remove();
+    document.body.classList.remove('print-cztr');
+  });
+  window.print();
+  setTimeout(function() {
+    document.getElementById('cztr-print-override')?.remove();
+    document.body.classList.remove('print-cztr');
+  }, 4000);
 }
 
 // ---- Modal ----
@@ -1103,6 +1284,8 @@ function init() {
   try { restoreDraft(); }           catch(e) { console.error('restoreDraft:', e); }
   try { setDataDefault(); }         catch(e) { console.error('setDataDefault:', e); }
   try { updateTabelExecutanti(); }  catch(e) { console.error('updateTabelExecutanti:', e); }
+  try { setAutoNr(); }              catch(e) { console.error('setAutoNr:', e); }
+  try { renderCztr(); }             catch(e) { console.error('renderCztr:', e); }
   dateSalvate = true;
 }
 if (document.readyState === 'loading') {
