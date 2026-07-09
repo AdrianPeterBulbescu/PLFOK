@@ -190,6 +190,29 @@ select.drop.large { flex: 2; min-width: 170px; }
   /* Placeholder-uri invizibile */
   input.camp::placeholder, textarea.camp-mare::placeholder { color: transparent !important; -webkit-text-fill-color: transparent !important; }
   input.camp:placeholder-shown { border-bottom-color: transparent !important; }
+
+  /* Formular umple integral pagina A4 */
+  html, body { height: 100% !important; }
+  .page {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .page > .header, .page > .titlu, .page > .nr-row { flex-shrink: 0 !important; }
+  .page > .bloc { flex-shrink: 0 !important; }
+  .page > .tabel-final { flex-shrink: 0 !important; margin-top: auto !important; }
+  /* Blocs cu textarea cresc să umple spațiul rămas */
+  .page > .bloc:has(> textarea.camp-mare) {
+    flex: 1 1 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .page > .bloc:has(> textarea.camp-mare) > .rand { flex-shrink: 0 !important; }
+  .page > .bloc:has(> textarea.camp-mare) > textarea.camp-mare {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    height: 0 !important;
+  }
 }
 
 /* ===== CLASA COMPACTĂ PENTRU PDF ===== */
