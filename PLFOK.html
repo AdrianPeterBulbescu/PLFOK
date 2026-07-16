@@ -1033,13 +1033,20 @@ function dezMarcheazaVide() {
 
 // ---- PDF ----
 function buildFilename() {
-  const nr   = document.getElementById('numar').value.trim() || 'NR';
-  const shown = document.getElementById('data_emitere_shown');
-  const dataText = shown && shown.textContent && !shown.textContent.includes('aaaa')
-                   ? shown.textContent.replace(/\.\d{4}$/, '')   // "16.07.2026" → "16.07"
-                   : 'DATA';
-  const loc  = (document.getElementById('locatia').value.trim()).replace(/[\\/:*?"<>|]/g,'_');
-  return ['PLFOK', nr, 'din', dataText, loc].filter(Boolean).join(' ');
+  const nr  = document.getElementById('numar').value.trim() || 'NR';
+  let data  = 'DATA';
+  const inp = document.getElementById('data_emitere');
+  if (inp && inp.value) {
+    const p = inp.value.split('-');          // ["2026","07","16"]
+    if (p.length === 3) data = p[2] + '.' + p[1];   // "16.07"
+  } else {
+    const sh = document.getElementById('data_emitere_shown');
+    if (sh && sh.textContent && !sh.textContent.includes('aaaa'))
+      data = sh.textContent.replace(/\.\d{4}$/, '');
+  }
+  const loc = (document.getElementById('locatia').value || '').trim().replace(/[\\/:*?"<>|]/g,'_');
+  console.log('buildFilename:', {nr, data, loc});
+  return ['PLFOK', nr, 'din', data, loc].filter(Boolean).join(' ');
 }
 
 function showPrintHelp() {
