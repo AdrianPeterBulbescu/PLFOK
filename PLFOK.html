@@ -976,6 +976,13 @@ function updateTabelExecutanti() {
     const el = document.getElementById(`exec_row_${i}`);
     if (el) el.textContent = toti[i-1]||'';
   }
+  // Rânduri manuale: apar doar când rândurile goale din cele 6 sunt sub 4
+  const filled = Math.min(toti.length, 6);
+  const emptyExec = 6 - filled;
+  const needManual = Math.max(0, 4 - emptyExec);
+  document.querySelectorAll('tr.exec-manual').forEach((tr, i) => {
+    tr.style.display = i < needManual ? '' : 'none';
+  });
 }
 
 document.addEventListener('change', e => {
