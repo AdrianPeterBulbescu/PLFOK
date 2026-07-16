@@ -1038,11 +1038,11 @@ function buildFilename() {
   const inp = document.getElementById('data_emitere');
   if (inp && inp.value) {
     const p = inp.value.split('-');          // ["2026","07","16"]
-    if (p.length === 3) data = p[2] + '.' + p[1];   // "16.07"
+    if (p.length === 3) data = p[2] + '.' + p[1] + '.' + p[0];   // "16.07.2026"
   } else {
     const sh = document.getElementById('data_emitere_shown');
     if (sh && sh.textContent && !sh.textContent.includes('aaaa'))
-      data = sh.textContent.replace(/\.\d{4}$/, '');
+      data = sh.textContent;
   }
   const loc = (document.getElementById('locatia').value || '').trim().replace(/[\\/:*?"<>|]/g,'_');
   console.log('buildFilename:', {nr, data, loc});
