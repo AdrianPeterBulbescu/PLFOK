@@ -377,6 +377,7 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
     </div>
     <div class="rand top-border">
       <span class="bold">ajutat de domnii:</span>
+      <div style="flex:1; min-width:200px; display:flex; flex-direction:column; gap:3px;">
       <div class="ms-wrapper" style="flex:1; min-width:200px;">
         <div class="ms-display ph" id="ms_ajutori_display" onclick="toggleMS('ajutori')">-- selectați (max 5) --</div>
         <div class="ms-panel" id="ms_ajutori_panel">
@@ -393,6 +394,8 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
           <label><input type="checkbox" value="Socaci Rareș" onchange="toggleAjutor('Socaci Rareș',this.checked)">Socaci Rareș</label>
           <label><input type="checkbox" value="Ștefan Ioan" onchange="toggleAjutor('Ștefan Ioan',this.checked)">Ștefan Ioan</label>
         </div>
+      </div>
+      <input class="camp" type="text" id="ajutori_terti" placeholder="terți — scrieți liber (Nume Prenume, ...)" style="width:100%; margin-top:2px;">
       </div>
     </div>
     <div class="rand top-border">
@@ -690,6 +693,10 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
       <tr><td class="rol" style="border-top:none;border-bottom:none"></td><td><div class="exec-name" id="exec_row_4"></div></td><td><input class="camp" type="text"></td></tr>
       <tr><td class="rol" style="border-top:none;border-bottom:none"></td><td><div class="exec-name" id="exec_row_5"></div></td><td><input class="camp" type="text"></td></tr>
       <tr><td class="rol" style="border-top:none"></td><td><div class="exec-name" id="exec_row_6"></div></td><td><input class="camp" type="text"></td></tr>
+      <tr class="exec-manual"><td class="rol" style="border-top:none;border-bottom:none"></td><td style="border-bottom:1px solid #bbb; min-height:14px;"></td><td style="border-bottom:1px solid #bbb;"></td></tr>
+      <tr class="exec-manual"><td class="rol" style="border-top:none;border-bottom:none"></td><td style="border-bottom:1px solid #bbb; min-height:14px;"></td><td style="border-bottom:1px solid #bbb;"></td></tr>
+      <tr class="exec-manual"><td class="rol" style="border-top:none;border-bottom:none"></td><td style="border-bottom:1px solid #bbb; min-height:14px;"></td><td style="border-bottom:1px solid #bbb;"></td></tr>
+      <tr class="exec-manual"><td class="rol" style="border-top:none;border-bottom:none"></td><td style="border-bottom:1px solid #bbb; min-height:14px;"></td><td style="border-bottom:1px solid #bbb;"></td></tr>
       <tr>
         <td colspan="3" class="rol" style="text-align:left; font-size:11px; padding:3px 7px;">Serv. public voluntar/privat pentru situații de urgență:</td>
       </tr>
@@ -962,15 +969,20 @@ function buildAllMS() {
 
 function updateTabelExecutanti() {
   const principal = document.getElementById('executant_principal').value;
-  const toti = principal ? [principal,...ajutoriSelectati] : [...ajutoriSelectati];
-  for (let i=1;i<=6;i++) document.getElementById(`exec_row_${i}`).textContent = toti[i-1]||'';
+  const tertiRaw = (document.getElementById('ajutori_terti')||{}).value || '';
+  const terti = tertiRaw.split(',').map(s=>s.trim()).filter(s=>s);
+  const toti = [...(principal?[principal]:[]), ...ajutoriSelectati, ...terti];
+  for (let i=1;i<=6;i++) {
+    const el = document.getElementById(`exec_row_${i}`);
+    if (el) el.textContent = toti[i-1]||'';
+  }
 }
 
 document.addEventListener('change', e => {
-  if (e.target.id==='executant_principal') { updateTabelExecutanti(); markDirty(); }
+  if (e.target.id==='executant_principal' || e.target.id==='ajutori_terti') { updateTabelExecutanti(); markDirty(); }
 });
 document.addEventListener('input', e => {
-  if (e.target.id==='executant_principal') { updateTabelExecutanti(); markDirty(); }
+  if (e.target.id==='executant_principal' || e.target.id==='ajutori_terti') { updateTabelExecutanti(); markDirty(); }
 });
 
 // ---- Dirty flag ----
