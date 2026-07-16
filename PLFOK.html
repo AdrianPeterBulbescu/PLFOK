@@ -1035,7 +1035,7 @@ function dezMarcheazaVide() {
 function buildFilename() {
   const nr  = document.getElementById('numar').value.trim() || 'NR';
   const inp = document.getElementById('data_emitere');
-  const data = inp && inp.value ? toRo(inp.value) : (document.getElementById('data_emitere_shown').textContent.replace('zz.ll.aaaa','DATA'));
+  const data = inp && inp.value ? toRo(inp.value).slice(0,5) : (document.getElementById('data_emitere_shown').textContent.replace('zz.ll.aaaa','DATA').slice(0,5));
   const loc = document.getElementById('locatia').value.trim().replace(/[\\/:*?"<>|]/g,'_') || 'LOCATIE';
   return `PLFOK ${nr} din ${data} ${loc}`;
 }
