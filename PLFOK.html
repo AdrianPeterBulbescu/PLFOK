@@ -163,6 +163,8 @@ select.drop.large { flex: 2; min-width: 170px; }
 
   /* Rânduri executanți goale */
   tr.exec-vide { display: none !important; }
+  /* Rânduri manuale — întotdeauna vizibile la print */
+  tr.exec-manual { display: table-row !important; }
 
   /* Selecturi — înlocuite cu text simplu la print */
   select[data-ph="1"] { display: none !important; }
@@ -1038,7 +1040,7 @@ function buildFilename() {
   const inp = document.getElementById('data_emitere');
   if (inp && inp.value) {
     const p = inp.value.split('-');          // ["2026","07","16"]
-    if (p.length === 3) data = p[2] + '.' + p[1] + '.' + p[0];   // "16.07.2026"
+    if (p.length === 3) data = p[2] + '-' + p[1] + '-' + p[0];   // "16-07-2026"
   } else {
     const sh = document.getElementById('data_emitere_shown');
     if (sh && sh.textContent && !sh.textContent.includes('aaaa'))
