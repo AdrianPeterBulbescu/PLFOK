@@ -161,10 +161,8 @@ select.drop.large { flex: 2; min-width: 170px; }
   .extinctor-row { padding: 1px 5px !important; gap: 4px !important; }
   .extinctor-grup.vide { display: none !important; }
 
-  /* Rânduri executanți goale */
-  tr.exec-vide { display: none !important; }
-  /* Rânduri manuale — întotdeauna vizibile la print */
-  tr.exec-manual { display: table-row !important; }
+  /* Rânduri executanți goale — rămân vizibile la print (spațiu scriere manuală) */
+  /* tr.exec-vide: nu se ascunde la print */
 
   /* Selecturi — înlocuite cu text simplu la print */
   select[data-ph="1"] { display: none !important; }
