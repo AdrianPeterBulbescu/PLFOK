@@ -1072,7 +1072,6 @@ function restoreSelecte() {
 
 function faPrint(cuFilename) {
   var printOK = false;
-  var salvat = false;
   var prevTitle = document.title;
   if (cuFilename) document.title = buildFilename();
   marcheazaVide();
@@ -1080,25 +1079,30 @@ function faPrint(cuFilename) {
   window.addEventListener('afterprint', function handler() {
     window.removeEventListener('afterprint', handler);
     printOK = true;
-    document.title = prevTitle;
     dezMarcheazaVide();
     restoreSelecte();
-    if (cuFilename && !salvat) { salvat=true; dateSalvate = true; salveazaInCztr(); updateAutoNr(); }
+    // Resetăm titlul după 15s — Adobe PDF are nevoie de timp să-și deschidă dialogul
+    setTimeout(function() { document.title = prevTitle; }, cuFilename ? 15000 : 0);
   });
   try { window.print(); } catch(e) {}
   setTimeout(function() {
     if (!printOK) {
-      document.title = prevTitle;
       dezMarcheazaVide();
       restoreSelecte();
       showPrintHelp();
-      if (cuFilename && !salvat) { salvat=true; dateSalvate = true; salveazaInCztr(); updateAutoNr(); }
+      setTimeout(function() { document.title = prevTitle; }, cuFilename ? 15000 : 0);
     }
   }, 4000);
 }
 
-function salvezaPDF() { faPrint(true); }
-function tipareste()  { faPrint(false); }
+function salvezaPDF() {
+  // Salvăm în centralizator imediat, nu așteptăm afterprint
+  salveazaInCztr();
+  updateAutoNr();
+  dateSalvate = true;
+  faPrint(true);
+}
+function tipareste() { faPrint(false); }
 
 // ---- Reset ----
 function resetForm() {
