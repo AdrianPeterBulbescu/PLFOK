@@ -118,7 +118,6 @@ select.drop.large { flex: 2; min-width: 170px; }
 /* ===== PRINT — O SINGURĂ PAGINĂ A4 ===== */
 @media print {
   @page { size: A4 portrait; margin: 8mm 10mm 8mm 20mm; }
-  html { zoom: 0.92; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: white !important; padding: 0 !important; }
   .actiuni, .modal-overlay, #js-status, #print-help { display: none !important; }
@@ -191,7 +190,7 @@ select.drop.large { flex: 2; min-width: 170px; }
   input.camp::placeholder, textarea.camp-mare::placeholder { color: transparent !important; -webkit-text-fill-color: transparent !important; }
   input.camp:placeholder-shown { border-bottom-color: transparent !important; }
 
-  /* Formular umple integral pagina A4 */
+  /* Formular umple integral pagina A4 — doar pct. 14 crește, restul la dimensiunea conținutului */
   html, body { height: 100% !important; }
   .page {
     height: 100% !important;
@@ -201,14 +200,14 @@ select.drop.large { flex: 2; min-width: 170px; }
   .page > .header, .page > .titlu, .page > .nr-row { flex-shrink: 0 !important; }
   .page > .bloc { flex-shrink: 0 !important; }
   .page > .tabel-final { flex-shrink: 0 !important; margin-top: auto !important; }
-  /* Blocs cu textarea cresc să umple spațiul rămas */
-  .page > .bloc:has(> textarea.camp-mare) {
+  /* Doar blocul 14 crește să umple spațiul rămas */
+  #bloc-masura14 {
     flex: 1 1 0 !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .page > .bloc:has(> textarea.camp-mare) > .rand { flex-shrink: 0 !important; }
-  .page > .bloc:has(> textarea.camp-mare) > textarea.camp-mare {
+  #bloc-masura14 > .rand { flex-shrink: 0 !important; }
+  #bloc-masura14 > textarea.camp-mare {
     flex: 1 1 0 !important;
     min-height: 0 !important;
     height: 0 !important;
@@ -636,7 +635,7 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
     <div class="rand"><span class="bold">13. Incendiul sau orice alt eveniment se anunță la: <u>112</u> prin dispecerat</span></div>
   </div>
 
-  <div class="bloc">
+  <div class="bloc" id="bloc-masura14">
     <div class="rand"><span class="bold">14. Alte măsuri specifice de apărare împotriva incendiului:</span></div>
     <textarea class="camp-mare" id="masura14" rows="2" placeholder="descrieți alte măsuri specifice..."></textarea>
   </div>
