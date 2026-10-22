@@ -733,12 +733,9 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
           <th class="col-nr">Nr.</th>
           <th class="col-data">Data emiterii</th>
           <th>Executant principal</th>
-          <th>Ajutori</th>
           <th>Tip lucrare / Echipament</th>
           <th>Locația</th>
           <th>Interval lucru</th>
-          <th>Emitent</th>
-          <th>Șef sector</th>
           <th class="col-del">Șterge</th>
         </tr>
       </thead>
@@ -1180,12 +1177,9 @@ function renderCztr() {
       <td class="col-nr">${e.nr}</td>
       <td class="col-data">${e.dataEmitere||''}</td>
       <td>${e.executant||''}</td>
-      <td>${e.ajutori||''}</td>
       <td>${tip}</td>
       <td>${e.locatie||''}</td>
       <td>${interval}</td>
-      <td>${e.emitent||''}</td>
-      <td>${e.sefSector||''}</td>
       <td class="col-del"><button class="btn-cztr-del" onclick="stergeCztr(${i})">✕</button></td>
     </tr>`;
   }).join('');
