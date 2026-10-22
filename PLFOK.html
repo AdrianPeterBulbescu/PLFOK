@@ -258,6 +258,8 @@ body.show-cztr .page, body.show-cztr .actiuni, body.show-cztr #print-help, body.
 .btn-cztr-del:hover { opacity: 0.8; }
 .btn-cztr-print { background: #2e7d32; color: white; }
 .btn-cztr-renr { background: #e65100; color: white; }
+.btn-cztr-export { background: #00695c; color: white; }
+.btn-cztr-import { background: #1565c0; color: white; }
 
 @media print {
   body.print-cztr .page, body.print-cztr .actiuni, body.print-cztr #print-help, body.print-cztr #js-status { display: none !important; }
@@ -718,6 +720,9 @@ body.compact select.drop.vide { color: transparent !important; border-bottom-col
     <div class="cztr-btns">
       <button class="btn btn-cztr-print" onclick="printCztr()">🖨️ Tipărește</button>
       <button class="btn btn-cztr-renr" onclick="renumeroteaza()">🔢 Renumerotează</button>
+      <button class="btn btn-cztr-export" onclick="exportCztr()">⬇️ Export JSON</button>
+      <button class="btn btn-cztr-import" onclick="document.getElementById('import-cztr-file').click()">⬆️ Import JSON</button>
+      <input type="file" id="import-cztr-file" accept=".json" style="display:none" onchange="importCztr(this)">
       <button class="btn btn-cztr-back" onclick="toggleCztr(false)">← Înapoi la formular</button>
     </div>
   </div>
@@ -1187,12 +1192,20 @@ function renderCztr() {
 }
 
 function stergeCztr(idx) {
-  if (!confirm('Ștergeți această intrare din centralizator?')) return;
   const cztr = getCztr();
+  const entry = cztr[idx];
+  if (!confirm('Ștergeți permisul nr. ' + entry.nr + ' din centralizator?')) return;
+  const nrSters = entry.nr;
   cztr.splice(idx, 1);
   saveCztr(cztr);
   renderCztr();
-  updateAutoNr();
+  // Întreabă dacă vrea să reia același număr
+  if (confirm('Doriți să reutilizați numărul ' + nrSters + ' pentru următorul permis?')) {
+    const inp = document.getElementById('numar');
+    if (inp) inp.value = nrSters;
+  } else {
+    updateAutoNr();
+  }
 }
 
 function renumeroteaza() {
@@ -1221,6 +1234,50 @@ function setAutoNr() {
     if (inp && !inp.value.trim()) inp.value = maxNr + 1;
   } catch(e) {}
 }
+
+function exportCztr() {
+  const cztr = getCztr();
+  const json = JSON.stringify(cztr, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const azi = new Date();
+  const zi = String(azi.getDate()).padStart(2,'0');
+  const luna = String(azi.getMonth()+1).padStart(2,'0');
+  a.download = 'PLFOK_centralizator_' + zi + '-' + luna + '-' + azi.getFullYear() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importCztr(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) { alert('Fișier JSON invalid — trebuie să fie o listă de permise.'); return; }
+      const existing = getCztr();
+      // Îmbinăm: permisele importate suprascriu cele existente cu același nr
+      const merged = [...existing];
+      imported.forEach(imp => {
+        const idx = merged.findIndex(x => String(x.nr) === String(imp.nr));
+        if (idx >= 0) { merged[idx] = imp; } else { merged.push(imp); }
+      });
+      merged.sort((a, b) => (parseInt(a.nr)||0) - (parseInt(b.nr)||0));
+      saveCztr(merged);
+      renderCztr();
+      updateAutoNr();
+      alert('Import reușit: ' + imported.length + ' permise importate, ' + merged.length + ' total în centralizator.');
+    } catch(err) { alert('Eroare la citirea fișierului JSON: ' + err.message); }
+    input.value = '';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// Date inițiale din registrul Excel 2026 (nr. 137-193) — pre-populare la prima lansare
+const CZTR_INITIAL = [{"nr":137,"dataEmitere":"19.01.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"SU Mures","dataInceput":"19.01.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":138,"dataEmitere":"22.01.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr. 13 Ernei","dataInceput":"22.01.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":139,"dataEmitere":"23.01.2026","executant":"","ajutori":"","tipLucru":"Remediere defect cond aductiune","echipament":"","locatie":"Gr. 1 Dvioara","dataInceput":"23.01.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":140,"dataEmitere":"29.01.2026","executant":"","ajutori":"","tipLucru":"Remediere defect impuritati sda 188","echipament":"","locatie":"Gr. 16 Mures","dataInceput":"29.01.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":141,"dataEmitere":"03.02.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr. 2 Bozed","dataInceput":"03.02.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":142,"dataEmitere":"06.02.2026","executant":"","ajutori":"","tipLucru":"Remediere defect la haba de etalonare","echipament":"","locatie":"Gr. 11 Mures","dataInceput":"06.02.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":143,"dataEmitere":"09.02.2026","executant":"","ajutori":"","tipLucru":"Remediere defect cond col golire in incinta grupului, la separator","echipament":"","locatie":"Gr 1 Dvioara","dataInceput":"09.02.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":144,"dataEmitere":"11.02.2026","executant":"","ajutori":"","tipLucru":"By-pass haba etalonare","echipament":"","locatie":"Gr. 11 Mures","dataInceput":"11.02.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":145,"dataEmitere":"12.02.2026","executant":"","ajutori":"","tipLucru":"Remediere defect la haba de etalonare","echipament":"","locatie":"Gr. 11 Ernei","dataInceput":"12.02.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":146,"dataEmitere":"16.02.2026","executant":"","ajutori":"","tipLucru":"Remediere defect la sist de ape reziduale","echipament":"","locatie":"Gr. 12 Bozed","dataInceput":"16.02.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":147,"dataEmitere":"04.03.2026","executant":"","ajutori":"","tipLucru":"Schimbare flansa ","echipament":"","locatie":"Sda 174 Bozed","dataInceput":"04.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":148,"dataEmitere":"10.03.2026","executant":"","ajutori":"","tipLucru":"Remediere defect panou masura","echipament":"","locatie":"Gr. 1 Dvioara","dataInceput":"10.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":149,"dataEmitere":"11.03.2026","executant":"","ajutori":"","tipLucru":"Remediere defect panou masura","echipament":"","locatie":"Gr. 1 Dvioara","dataInceput":"11.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":150,"dataEmitere":"12.03.2026","executant":"","ajutori":"","tipLucru":"Remediere defect panou masura","echipament":"","locatie":"Gr. 1 Dvioara","dataInceput":"12.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":151,"dataEmitere":"18.03.2026","executant":"","ajutori":"","tipLucru":"Montaj priza","echipament":"","locatie":"Sda 136 Bozed","dataInceput":"18.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":152,"dataEmitere":"19.03.2026","executant":"","ajutori":"","tipLucru":"Remediere defect evacuare","echipament":"","locatie":"Sda 156 Pgeni","dataInceput":"19.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":153,"dataEmitere":"23.03.2026","executant":"","ajutori":"","tipLucru":"Montaj scara","echipament":"","locatie":"Sda 197  Mures","dataInceput":"23.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":154,"dataEmitere":"30.03.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr. 11 Mures","dataInceput":"30.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":155,"dataEmitere":"31.03.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr. 11 Mures","dataInceput":"31.03.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":156,"dataEmitere":"01.04.2026","executant":"","ajutori":"","tipLucru":"Terti","echipament":"","locatie":"SU Corunca","dataInceput":"01.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":157,"dataEmitere":"01.04.2026","executant":"","ajutori":"","tipLucru":"Defect cond colector Damieni Isla","echipament":"","locatie":"Gr. 10 Damieni","dataInceput":"01.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":158,"dataEmitere":"07.04.2026","executant":"","ajutori":"","tipLucru":"Remediere defect panou masura","echipament":"","locatie":"Gr. 24 Dvioara","dataInceput":"07.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":159,"dataEmitere":"08.04.2026","executant":"","ajutori":"","tipLucru":"Remediere defect la separator intrare in grup","echipament":"","locatie":"Gr 10 Petrilaca","dataInceput":"08.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":160,"dataEmitere":"15.04.2026","executant":"","ajutori":"","tipLucru":"Remediere defect cond","echipament":"","locatie":"Gr. 18 Petrilaca","dataInceput":"15.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":161,"dataEmitere":"17.04.2026","executant":"","ajutori":"","tipLucru":"Montaj si confectie imprejmuire","echipament":"","locatie":"Gr. 41 Ernei","dataInceput":"17.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":162,"dataEmitere":"20.04.2026","executant":"","ajutori":"","tipLucru":"Imprejmuire si defect ape reziduale","echipament":"","locatie":"Gr. 1 Mures","dataInceput":"20.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":163,"dataEmitere":"21.04.2026","executant":"","ajutori":"","tipLucru":"Refacere imprejmuire","echipament":"","locatie":"Panou mas Pgeni","dataInceput":"21.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":164,"dataEmitere":"23.04.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr. 14 Petrilaca","dataInceput":"23.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":165,"dataEmitere":"24.04.2026","executant":"","ajutori":"","tipLucru":"Refacere imprejmuire grup sonde","echipament":"","locatie":"Sda 500 Mures","dataInceput":"24.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":166,"dataEmitere":"27.04.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr. 1 Pgeni","dataInceput":"27.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":167,"dataEmitere":"30.04.2026","executant":"","ajutori":"","tipLucru":"Inlocuire difuzor ape rez","echipament":"","locatie":"Gr. 2 Bozed","dataInceput":"30.04.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":168,"dataEmitere":"14.05.2026","executant":"","ajutori":"","tipLucru":"Legare dupa RK","echipament":"","locatie":"Sda 100 Ernei","dataInceput":"14.05.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":169,"dataEmitere":"18.05.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr 24 Dvioara","dataInceput":"18.05.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":170,"dataEmitere":"20.05.2026","executant":"","ajutori":"","tipLucru":"Legare dupa RK","echipament":"","locatie":"Sda 146 Bozed","dataInceput":"20.05.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":171,"dataEmitere":"15.06.2026","executant":"","ajutori":"","tipLucru":"Desfacere cap eruptie","echipament":"","locatie":"Sda 223 Ernei","dataInceput":"15.06.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":172,"dataEmitere":"16.06.2026","executant":"","ajutori":"","tipLucru":"Defect  remediat la sda 176 Bozed","echipament":"","locatie":"Gr 2 Bozed","dataInceput":"16.06.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":173,"dataEmitere":"22.06.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Sda 35 Ernei","dataInceput":"22.06.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":174,"dataEmitere":"24.06.2026","executant":"","ajutori":"","tipLucru":"Montare racord GNC","echipament":"","locatie":"Gr. 26 Mures","dataInceput":"24.06.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":175,"dataEmitere":"16.07.2026","executant":"","ajutori":"","tipLucru":"Montaj  flansa electroizolanta","echipament":"","locatie":"Panou mas Dvioara","dataInceput":"16.07.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":176,"dataEmitere":"17.07.2026","executant":"","ajutori":"","tipLucru":"Montaj  flansa electroizolanta","echipament":"","locatie":"Panou mas Dvioara","dataInceput":"17.07.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":177,"dataEmitere":"23.07.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Sda 193 Mures","dataInceput":"23.07.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":178,"dataEmitere":"03.08.2026","executant":"","ajutori":"","tipLucru":"Inlocuire claviatura sistem ape reziduale","echipament":"","locatie":"Gr 9 Ernei","dataInceput":"03.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":179,"dataEmitere":"04.08.2026","executant":"","ajutori":"","tipLucru":"Inlocuire claviatura sistem ape reziduale","echipament":"","locatie":"Gr 9 Ernei","dataInceput":"04.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":180,"dataEmitere":"07.08.2026","executant":"","ajutori":"","tipLucru":"Legare dupa RK","echipament":"","locatie":"Sda 109 Ernei","dataInceput":"07.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":181,"dataEmitere":"10.08.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr 9 Bozed","dataInceput":"10.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":182,"dataEmitere":"19.08.2026","executant":"","ajutori":"","tipLucru":"Taiere prezoane pentru pregatire RK","echipament":"","locatie":"Sda 145 Bozed","dataInceput":"19.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":183,"dataEmitere":"19.08.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr 11 Ernei","dataInceput":"19.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":184,"dataEmitere":"20.08.2026","executant":"","ajutori":"","tipLucru":"Remediere defect ape reziduale","echipament":"","locatie":"Gr 11 Ernei","dataInceput":"20.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":185,"dataEmitere":"26.08.2026","executant":"","ajutori":"","tipLucru":"Legare dupa RK","echipament":"","locatie":"Sda 145 Bozed","dataInceput":"26.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":186,"dataEmitere":"31.08.2026","executant":"","ajutori":"","tipLucru":"Legare dupa RK","echipament":"","locatie":"Sda 16 Ernei","dataInceput":"31.08.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":187,"dataEmitere":"02.09.2026","executant":"","ajutori":"","tipLucru":"Montare sifon","echipament":"","locatie":"Col Ernei-Corunca","dataInceput":"02.09.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":188,"dataEmitere":"05.10.2026","executant":"","ajutori":"","tipLucru":"Legare dupa RK","echipament":"","locatie":"Sda 20 Bozed","dataInceput":"05.10.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":189,"dataEmitere":"06.10.2026","executant":"","ajutori":"","tipLucru":"Remediere defect si inlocuire instalatie refulare","echipament":"","locatie":"Gr 1 Voivodeni","dataInceput":"06.10.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":190,"dataEmitere":"07.10.2026","executant":"","ajutori":"","tipLucru":"Remediere defect si inlocuire instalatie refulare","echipament":"","locatie":"Gr 1 Voivodeni","dataInceput":"07.10.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":191,"dataEmitere":"12.10.2026","executant":"","ajutori":"","tipLucru":"Remediere defect la haba de etalonare","echipament":"","locatie":"Gr 12 Mures","dataInceput":"12.10.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":192,"dataEmitere":"13.10.2026","executant":"","ajutori":"","tipLucru":"Remediere defect la haba de etalonare","echipament":"","locatie":"Gr 12 Mures","dataInceput":"13.10.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""},{"nr":193,"dataEmitere":"14.10.2026","executant":"","ajutori":"","tipLucru":"Inlocuire separator","echipament":"","locatie":"Gr 11 Ernei","dataInceput":"14.10.2026","oraInceput":"","dataSfarsit":"","oraSfarsit":"","emitent":"","sefSector":""}];
 
 function toggleCztr(show) {
   document.body.classList.toggle('show-cztr', show);
@@ -1338,6 +1395,12 @@ function init() {
   if (initDone) return;
   initDone = true;
   try { setupPickers(); }           catch(e) { console.error('setupPickers:', e); }
+  // Pre-populare cu date din registrul Excel, doar dacă centralizatorul e gol
+  try {
+    if (!localStorage.getItem('permis_foc_centralizator') || getCztr().length === 0) {
+      saveCztr(CZTR_INITIAL);
+    }
+  } catch(e) {}
   try { restoreDraft(); }           catch(e) { console.error('restoreDraft:', e); }
   try { setDataDefault(); }         catch(e) { console.error('setDataDefault:', e); }
   try { updateTabelExecutanti(); }  catch(e) { console.error('updateTabelExecutanti:', e); }
